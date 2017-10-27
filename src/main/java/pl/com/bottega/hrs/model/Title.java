@@ -37,6 +37,8 @@ public class Title {
     @Column(name = "from_date")
     private LocalDate fromDate;
 
+        public TitleId() { }
+
         public TitleId(Integer emoNo, String title, LocalDate fromDate) {
             this.emoNo = emoNo;
             this.title = title;

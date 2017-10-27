@@ -165,4 +165,7 @@ public class Employee {
     }
 
 
+    public void addDepartmentAssignment(DepartmentAssignment departmentAssignment) {
+        departmentAssignments.add(departmentAssignment);
+    }
 }

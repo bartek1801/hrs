@@ -18,6 +18,14 @@ public class DepartmentAssignment {
     @Column(name = "to_date")
     private LocalDate toDate;
 
+    public DepartmentAssignment() {}
+
+    public DepartmentAssignment(DepartmentAssignmentId id, LocalDate fromDate, LocalDate toDate) {
+        this.id = id;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
+    }
+
     public LocalDate getToDate() {
         return toDate;
     }
@@ -34,6 +42,13 @@ public class DepartmentAssignment {
 
         @Column(name = "dept_no", columnDefinition = "char(4)")
         private String departmentNumber;
+
+        public DepartmentAssignmentId(Integer empNo, String departmentNumber) {
+            this.empNo = empNo;
+            this.departmentNumber = departmentNumber;
+        }
+
+        public DepartmentAssignmentId() {}
 
         public Integer getEmpNo() {
             return empNo;

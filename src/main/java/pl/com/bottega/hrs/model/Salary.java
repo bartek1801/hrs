@@ -39,6 +39,8 @@ public class Salary {
         @Column(name = "from_Date")
         private LocalDate fromDate;
 
+        public SalaryId() {}
+
         public SalaryId(Integer empNo, LocalDate fromDate) {
             this.empNo = empNo;
             this.fromDate = fromDate;

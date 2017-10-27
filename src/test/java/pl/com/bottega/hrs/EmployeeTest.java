@@ -1,10 +1,7 @@
 package pl.com.bottega.hrs;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import pl.com.bottega.hrs.model.Address;
-import pl.com.bottega.hrs.model.Employee;
-import pl.com.bottega.hrs.model.Salary;
-import pl.com.bottega.hrs.model.Title;
+import pl.com.bottega.hrs.model.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -213,6 +210,62 @@ public class EmployeeTest {
             String title = testEmployee7.getCurrentTitle();
             assertEquals("Dyrektor", title);
         });
+    }
+
+
+    private Employee testEmployee8;
+    @Test
+    public void shouldGetCurrentDepartmentNumber(){
+        //given
+        executeInTransaction(entityManager -> {
+            testEmployee8 = createEmploye(8, "Krzysztof", "Jeżyna");
+            Department dept1 = new Department("d001", "Sales");
+            Department dept2 = new Department("d002", "Marketing");
+            DepartmentAssignment.DepartmentAssignmentId deptId1 = new DepartmentAssignment.DepartmentAssignmentId(8, "d001");
+            DepartmentAssignment.DepartmentAssignmentId deptId2 = new DepartmentAssignment.DepartmentAssignmentId(8, "d002");
+            DepartmentAssignment deptAssign1 = new DepartmentAssignment(deptId1, LocalDate.parse("2015-02-05"), LocalDate.parse("2016-06-05"));
+            testEmployee8.addDepartmentAssignment(deptAssign1);
+            DepartmentAssignment deptAssign2 = new DepartmentAssignment(deptId2, LocalDate.parse("2016-06-05"), LocalDate.parse("9999-01-01"));
+            testEmployee8.addDepartmentAssignment(deptAssign2);
+            entityManager.persist(testEmployee8);
+        });
+
+        //then
+        executeInTransaction(entityManager -> {
+            String deptAssignId = testEmployee8.getCurrentDepartmentNumber() ;
+            assertEquals("d002", deptAssignId);
+        });
+
+
+    }
+
+    private Employee testEmployee9;
+    @Test
+    public void shuldGetCurrentDepartment(){
+        //given
+        executeInTransaction(entityManager -> {
+            testEmployee9 = createEmploye(9, "Krzysztof", "Jeżyna");
+            Department dept1 = new Department("d001", "Sales");
+            Department dept2 = new Department("d002", "Marketing");
+            DepartmentAssignment.DepartmentAssignmentId deptId1 = new DepartmentAssignment.DepartmentAssignmentId(9, "d001");
+            DepartmentAssignment.DepartmentAssignmentId deptId2 = new DepartmentAssignment.DepartmentAssignmentId(9, "d002");
+            DepartmentAssignment deptAssign1 = new DepartmentAssignment(deptId1, LocalDate.parse("2015-02-05"), LocalDate.parse("2016-06-05"));
+            testEmployee9.addDepartmentAssignment(deptAssign1);
+            DepartmentAssignment deptAssign2 = new DepartmentAssignment(deptId2, LocalDate.parse("2016-06-05"), LocalDate.parse("9999-01-01"));
+            testEmployee9.addDepartmentAssignment(deptAssign2);
+            entityManager.persist(testEmployee9);
+        });
+
+        //then
+        executeInTransaction(entityManager -> {
+            Department department = new Department("d002", "Marketing");
+            Department currentDepartment = testEmployee9.getCurrentDepartment(entityManager);
+            assertEquals(department, currentDepartment);
+        });
+
+
+
+
     }
 
 

@@ -19,5 +19,10 @@ public class Department {
     @JoinColumn(name = "dept_no")
     private Collection<DepartmentAssignment> departmentAssignments = new LinkedList<>();
 
+    public Department() {}
 
+    public Department(String departmentNumber, String departmentName) {
+        this.departmentNumber = departmentNumber;
+        this.departmentName = departmentName;
+    }
 }
