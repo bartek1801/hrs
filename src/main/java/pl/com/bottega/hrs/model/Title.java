@@ -14,46 +14,69 @@ public class Title {
     @Column(name = "to_date")
     private LocalDate toDate;
 
+    @Transient
+    private TimeProvider timeProvider;
+
+    public Title() {
+    }
+
+    public Title(Integer empNo, String title, TimeProvider timeProvider) {
+        this.id = new TitleId(empNo, title, timeProvider);
+        this.toDate = Constants.MAX_DATE;
+        this.timeProvider = timeProvider;
+    }
+
+    public boolean isCurrent() {
+        return toDate.isAfter(timeProvider.today());
+    }
+
+    public String getTitleName() {
+        return id.title;
+    }
+
+    public boolean startsToday() {
+        return toDate.isEqual(timeProvider.today());
+    }
+
+    public void change(String newTitle) {
+        id.change(newTitle);
+    }
+
+    public void terminate() {
+        toDate = timeProvider.today();
+    }
+
+    public LocalDate getFromDate() {
+        return id.fromDate;
+    }
+
     public LocalDate getToDate() {
         return toDate;
     }
 
-    public TitleId getId() {
-        return id;
-    }
-
-    public void setToDate(LocalDate toDate) {
-        this.toDate = toDate;
-    }
-
-
     @Embeddable
-    public static class TitleId implements Serializable{
-    @Column(name = "emp_no")
-    private Integer emoNo;
+    public static class TitleId implements Serializable {
+        @Column(name = "emp_no")
+        private Integer emoNo;
 
-    private String title;
+        private String title;
 
-    @Column(name = "from_date")
-    private LocalDate fromDate;
+        @Column(name = "from_date")
+        private LocalDate fromDate;
 
-        public TitleId() { }
+        public TitleId() {
+        }
 
-        public TitleId(Integer emoNo, String title, LocalDate fromDate) {
+        public TitleId(Integer emoNo, String title, TimeProvider timeProvider) {
             this.emoNo = emoNo;
             this.title = title;
-            this.fromDate = fromDate;
+            this.fromDate = timeProvider.today();
         }
 
-        public String getTitle() {
-            return title;
+        public void change(String newTitle) {
+            this.title = newTitle;
         }
     }
 
-    public Title(){}
 
-    public Title(TitleId id, LocalDate toDate) {
-        this.id = id;
-        this.toDate = toDate;
-    }
 }

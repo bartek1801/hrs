@@ -146,23 +146,33 @@ public class Employee {
     }
 
 
-    public void changeTitle(String title) {
-        Title newTitle = new Title(new Title.TitleId(empNo, title, timeProvider.today()), MAX_DATE);
-        if (getCurrentTitle() != null) {
-            titles.stream().forEach(tmpTitle -> {
-                if (tmpTitle.getToDate().equals(MAX_DATE))
-                    tmpTitle.setToDate(timeProvider.today());
-            });
+    public void changeTitle(String newTitle) {
+        Optional<Title> optionalTitle = getCurrentTitle();
+        if (optionalTitle.isPresent()){
+            Title currentTitle = optionalTitle.get();
+            removeOrTerminateTitle(newTitle, currentTitle);
         }
-        titles.add(newTitle);
+        else {
+            addNewTitle(newTitle);
+        }
     }
 
-    public String getCurrentTitle() {
-        for (Title title : titles) {
-            if (title.getToDate().equals(MAX_DATE))
-                return title.getId().getTitle();
+    private void addNewTitle(String newTitle) {
+        titles.add(new Title(empNo, newTitle, timeProvider));
+    }
+
+    private void removeOrTerminateTitle(String newTitle, Title currentTitle) {
+        if (currentTitle.startsToday()){
+            currentTitle.change(newTitle);
         }
-        return null;
+        else {
+            currentTitle.terminate();
+            addNewTitle(newTitle);
+        }
+    }
+
+    public Optional<Title> getCurrentTitle() {
+        return titles.stream().filter(title -> title.isCurrent()).findFirst();
     }
 
     public void assignDepartment(Department department) {
@@ -193,5 +203,11 @@ public class Employee {
     }
 
 
+    public Collection<DepartmentAssignment> getDepartmentsHistory() {
+        return departmentAssignments;
+    }
 
+    public Collection<Title> getTitles() {
+        return titles;
+    }
 }

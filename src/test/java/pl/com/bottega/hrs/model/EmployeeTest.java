@@ -7,7 +7,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.Currency;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -18,6 +18,8 @@ import static org.junit.Assert.assertTrue;
 public class EmployeeTest {
 
     public static final int SALARY = 50000 * 12;
+    public static final String TITLE1 = "Specialist";
+    public static final String TITLE2 = "Manager";
     private final Address address = new Address("Północna", "Lublin");
     private final TimeMachine timeMachine = new TimeMachine();
     private final Employee sut = new Employee(1,
@@ -121,6 +123,90 @@ public class EmployeeTest {
         assertEquals(Arrays.asList(d1), sut.getCurrentDepartments());
     }
 
+    @Test
+    public void shouldKeepDepartmentsHistory(){
+        //when
+        timeMachine.travel(Duration.ofDays(-365 * 2));
+        LocalDate t0 = timeMachine.today();
+        sut.assignDepartment(d1);
+        timeMachine.travel(Duration.ofDays(365));
+        LocalDate t1 = timeMachine.today();
+        sut.assignDepartment(d2);
+        timeMachine.travel(Duration.ofDays(100));
+        LocalDate t2 = timeMachine.today();
+        sut.unAssignDepartment(d2);
+
+        //then
+        Collection<DepartmentAssignment> history = sut.getDepartmentsHistory();
+        assertEquals(Arrays.asList(t0, t1),
+                history.stream().map(DepartmentAssignment :: getFromDate).collect(Collectors.toList())
+        );
+        assertEquals(Arrays.asList(Constants.MAX_DATE, t2),
+                history.stream().map(DepartmentAssignment :: getToDate).collect(Collectors.toList())
+        );
+
+    }
+    @Test
+    public void  shouldReturnNoTitleIfNoTitleDefined(){
+        //then
+        assertFalse(getCurrentTitle().isPresent());
+    }
+
+
+    @Test
+    public void shouldAddAndReturnEmployeeTitle(){
+        //when
+        sut.changeTitle(TITLE1);
+
+        //then
+        assertTrue(getCurrentTitle().isPresent());
+        assertEquals(TITLE1, getCurrentTitleName());
+    }
+
+    @Test
+    public void shouldAllowMultipleChangesOfTitle(){
+        //when
+        sut.changeTitle(TITLE1);
+        sut.changeTitle(TITLE2);
+
+        //then
+        assertTrue(getCurrentTitle().isPresent());
+        assertEquals(TITLE2, getCurrentTitleName());
+    }
+
+    @Test
+    public void shouldKeepTitleHistory(){
+        //when
+        timeMachine.travel(Duration.ofDays(-365 * 2));
+        LocalDate t0 = timeMachine.today();
+        sut.changeTitle(TITLE1);
+        timeMachine.travel(Duration.ofDays(365));
+        LocalDate t1 = timeMachine.today();
+        sut.changeTitle(TITLE2);
+
+        //then
+        Collection<Title> history = sut.getTitles();
+        assertEquals(Arrays.asList(TITLE1, TITLE2),
+                history.stream().map(Title::getTitleName).collect(Collectors.toList())
+        );
+        assertEquals(Arrays.asList(t0, t1),
+                history.stream().map(Title::getFromDate).collect(Collectors.toList())
+        );
+        assertEquals(Arrays.asList(t1, Constants.MAX_DATE),
+                history.stream().map(Title::getToDate).collect(Collectors.toList())
+        );
+
+
+    }
+
+    private String getCurrentTitleName() {
+        return getCurrentTitle().get().getTitleName();
+    }
+
+
+    private Optional<Title> getCurrentTitle() {
+        return sut.getCurrentTitle();
+    }
 
     private int getCurrentSalaryValue() {
         return getCurrentSalary().get().getValue();
