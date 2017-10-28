@@ -1,6 +1,7 @@
 package pl.com.bottega.hrs.model;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -24,6 +25,8 @@ public class EmployeeTest {
             LocalDate.parse("1960-01-01"),
             address,
             timeMachine);
+    private Department d1 = Mockito.mock(Department.class);
+    private Department d2 = Mockito.mock(Department.class);
 
     @Test
     public void shouldReturnNoSalaryIfNoSalaryDefined(){
@@ -80,6 +83,42 @@ public class EmployeeTest {
         assertEquals(
                 Arrays.asList(t1, t2, Constants.MAX_DATE),
                 history.stream().map((s) -> s.getToDate()).collect(Collectors.toList()));
+    }
+
+    @Test
+    public void shouldRetursEmtyDepartmentWhenNoAssignment(){
+        assertEquals(0, sut.getCurrentDepartments().size());
+    }
+
+    @Test
+    public void shouldAssignToManyDepartments(){
+        //when
+        sut.assignDepartment(d1);
+        sut.assignDepartment(d2);
+
+        //then
+        assertEquals(Arrays.asList(d1, d2), sut.getCurrentDepartments());
+    }
+
+    @Test
+    public void shouldNotAssignTwiceToTheSameDepartment(){
+        //when
+        sut.assignDepartment(d1);
+        sut.assignDepartment(d1);
+
+        //then
+        assertEquals(Arrays.asList(d1), sut.getCurrentDepartments());
+    }
+
+    @Test
+    public void shouldUnassignedDepartment(){
+        //when
+        sut.assignDepartment(d1);
+        sut.assignDepartment(d2);
+        sut.unAssignDepartment(d2);
+
+        //then
+        assertEquals(Arrays.asList(d1), sut.getCurrentDepartments());
     }
 
 

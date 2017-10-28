@@ -1,8 +1,6 @@
 package pl.com.bottega.hrs.model;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.LinkedList;
 
 @Entity
 @Table(name = "departments")
@@ -10,19 +8,23 @@ public class Department {
 
     @Id
     @Column(name = "dept_no", columnDefinition = "char(4)")
-    private String departmentNumber;
+    private String deptNo;
 
     @Column(name = "dept_name")
-    private String departmentName;
+    private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "dept_no")
-    private Collection<DepartmentAssignment> departmentAssignments = new LinkedList<>();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-    public Department() {}
+        Department that = (Department) o;
 
-    public Department(String departmentNumber, String departmentName) {
-        this.departmentNumber = departmentNumber;
-        this.departmentName = departmentName;
+        return deptNo.equals(that.deptNo);
+    }
+
+    @Override
+    public int hashCode() {
+        return deptNo.hashCode();
     }
 }

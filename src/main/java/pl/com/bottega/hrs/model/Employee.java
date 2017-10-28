@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "employees")
@@ -47,7 +48,7 @@ public class Employee {
     @JoinColumn(name = "emp_no")
     private Collection<Title> titles = new LinkedList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "emp_no")
     private Collection<DepartmentAssignment> departmentAssignments = new LinkedList<>();
 
@@ -109,6 +110,10 @@ public class Employee {
         titles.add(title);
     }
 
+    public void addDepartmentAssignment(DepartmentAssignment departmentAssignment) {
+        departmentAssignments.add(departmentAssignment);
+    }
+
     public void changeSalary(Integer newSalary) {
         Optional<Salary> optionalSalary = getCurrentSalary();
         if (optionalSalary.isPresent()){
@@ -118,15 +123,6 @@ public class Employee {
         else {
             addNewSalary(newSalary);
         }
-//
-//        Salary newSalary = new Salary(new Salary.SalaryId(empNo, LocalDate.now()), salary, MAX_DATE);
-//        if (getCurrentSalary() != null) {
-//            salaries.stream().forEach(tmpSalary -> {
-//                if (tmpSalary.getToDate().equals(MAX_DATE))
-//                    tmpSalary.setToDate(LocalDate.now());
-//            });
-//        }
-//        salaries.add(newSalary);
     }
 
     private void addNewSalary(Integer newSalary) {
@@ -145,17 +141,10 @@ public class Employee {
 
     public Optional<Salary> getCurrentSalary(){
         return salaries.stream()
-                .filter((salary) -> salary.isCurrent())
+                .filter(Salary :: isCurrent) // .filter((salary) -> salary.isCurrent())
                 .findFirst();
     }
 
-//    public Optional<Integer> getCurrentSalary() {
-//        for (Salary salary : salaries) {
-//            if (salary.getToDate().equals(MAX_DATE))
-//                return Optional.of(salary.getSalary());
-//        }
-//        return Optional.empty();
-//    }
 
     public void changeTitle(String title) {
         Title newTitle = new Title(new Title.TitleId(empNo, title, timeProvider.today()), MAX_DATE);
@@ -176,28 +165,33 @@ public class Employee {
         return null;
     }
 
-    public void changeDepartment(String departmentNumber) {
-
+    public void assignDepartment(Department department) {
+        if (!isCurrentlyAssignedTo(department))
+            departmentAssignments.add(new DepartmentAssignment(empNo, department, timeProvider));
     }
 
-    public String getCurrentDepartmentNumber() {
-        for (DepartmentAssignment departmentAssignment : departmentAssignments) {
-            if (departmentAssignment.getToDate().equals(MAX_DATE)) {
-                return departmentAssignment.getId().getDepartmentNumber();
-            }
-        }
-        return null;
+    private boolean isCurrentlyAssignedTo(Department department) {
+        return getCurrentDepartments().contains(department);
     }
 
-    public Department getCurrentDepartment(EntityManager em) {
-        String departmentNumber = getCurrentDepartmentNumber();
-        Query query = em.createQuery("SELECT d FROM Department d WHERE d.departmentNumber = :departmentNumber")
-                .setParameter("departmentNumber", departmentNumber);
-        return (Department) query.getSingleResult();
+    public void unAssignDepartment(Department department) {
+        departmentAssignments.stream().
+                filter((assignment) -> assignment.isAssigned(department)).
+                findFirst().
+                ifPresent(DepartmentAssignment :: unassign);
+                //ifPresent((assignment) -> assignment.unassign());
     }
 
 
-    public void addDepartmentAssignment(DepartmentAssignment departmentAssignment) {
-        departmentAssignments.add(departmentAssignment);
+
+    public Collection<Department> getCurrentDepartments() {
+       return departmentAssignments.stream().
+               filter(DepartmentAssignment :: isCurrent).
+               map( DepartmentAssignment :: getDepartment).collect(Collectors.toList());
+//                filter((assignment) -> assignment.isCurrent()).
+//                map( (assignment) -> assignment.getDepartment()).collect(Collectors.toList());
     }
+
+
+
 }

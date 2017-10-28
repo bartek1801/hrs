@@ -7,7 +7,8 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "dept_emp")
 public class DepartmentAssignment {
-    //połącz z Employee i z Department
+
+    private TimeProvider timeProvider;
 
     @EmbeddedId
     private DepartmentAssignmentId id;
@@ -18,21 +19,33 @@ public class DepartmentAssignment {
     @Column(name = "to_date")
     private LocalDate toDate;
 
-    public DepartmentAssignment() {}
-
-    public DepartmentAssignment(DepartmentAssignmentId id, LocalDate fromDate, LocalDate toDate) {
-        this.id = id;
-        this.fromDate = fromDate;
-        this.toDate = toDate;
+    public DepartmentAssignment() {
     }
 
-    public LocalDate getToDate() {
-        return toDate;
+    public DepartmentAssignment(Integer empNo, Department department, TimeProvider timeProvider) {
+        id = new DepartmentAssignmentId(empNo, department);
+        this.timeProvider = timeProvider;
+        fromDate = timeProvider.today();
+        toDate = Constants.MAX_DATE;
     }
 
-    public DepartmentAssignmentId getId() {
-        return id;
+
+    public Department getDepartment() {
+        return id.department;
     }
+
+    public boolean isAssigned(Department department) {
+        return toDate.isAfter(timeProvider.today()) && department.equals(id.department);
+    }
+
+    public void unassign() {
+        toDate = timeProvider.today();
+    }
+
+    public boolean isCurrent() {
+        return toDate.isAfter(timeProvider.today());
+    }
+
 
     @Embeddable
     public static class DepartmentAssignmentId implements Serializable{
@@ -40,23 +53,17 @@ public class DepartmentAssignment {
         @Column(name = "emp_no")
         private Integer empNo;
 
-        @Column(name = "dept_no", columnDefinition = "char(4)")
-        private String departmentNumber;
+        @ManyToOne
+        @JoinColumn(name = "dept_no")
+        private Department department;
 
-        public DepartmentAssignmentId(Integer empNo, String departmentNumber) {
+
+        public DepartmentAssignmentId(Integer empNo, Department department) {
             this.empNo = empNo;
-            this.departmentNumber = departmentNumber;
+            this.department = department;
         }
 
-        public DepartmentAssignmentId() {}
-
-        public Integer getEmpNo() {
-            return empNo;
+        public DepartmentAssignmentId() {
         }
-
-        public String getDepartmentNumber() {
-            return departmentNumber;
-        }
-
     }
 }
