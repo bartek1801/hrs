@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 
 @Entity
@@ -19,6 +18,9 @@ public class Employee {
 
     @Column(name = "birth_date")
     private LocalDate birthDate;
+
+    @Transient
+    private TimeProvider timeProvider;
 
     @Column(name = "hire_date")
     private LocalDate hireDate;
@@ -53,12 +55,13 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(Integer empNo, String firstName, String lastName, LocalDate birthDate, Address address) {
+    public Employee(Integer empNo, String firstName, String lastName, LocalDate birthDate, Address address, TimeProvider timeProvider) {
         this.empNo = empNo;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
-        this.hireDate = LocalDate.now();
+        this.timeProvider = timeProvider;
+        this.hireDate = timeProvider.today();
         this.address = address;
     }
 
@@ -106,31 +109,60 @@ public class Employee {
         titles.add(title);
     }
 
-    public void changeSalary(Integer salary) {
-        Salary newSalary = new Salary(new Salary.SalaryId(empNo, LocalDate.now()), salary, MAX_DATE);
-        if (getCurrentSalary() != null) {
-            salaries.stream().forEach(tmpSalary -> {
-                if (tmpSalary.getToDate().equals(MAX_DATE))
-                    tmpSalary.setToDate(LocalDate.now());
-            });
+    public void changeSalary(Integer newSalary) {
+        Optional<Salary> optionalSalary = getCurrentSalary();
+        if (optionalSalary.isPresent()){
+            Salary currentSalary = optionalSalary.get();
+            removeOrTerminateSalary(newSalary, currentSalary);
         }
-        salaries.add(newSalary);
+        else {
+            addNewSalary(newSalary);
+        }
+//
+//        Salary newSalary = new Salary(new Salary.SalaryId(empNo, LocalDate.now()), salary, MAX_DATE);
+//        if (getCurrentSalary() != null) {
+//            salaries.stream().forEach(tmpSalary -> {
+//                if (tmpSalary.getToDate().equals(MAX_DATE))
+//                    tmpSalary.setToDate(LocalDate.now());
+//            });
+//        }
+//        salaries.add(newSalary);
     }
 
-    public Optional<Integer> getCurrentSalary() {
-        for (Salary salary : salaries) {
-            if (salary.getToDate().equals(MAX_DATE))
-                return Optional.of(salary.getSalary());
-        }
-        return null;
+    private void addNewSalary(Integer newSalary) {
+        salaries.add(new Salary(empNo, newSalary, timeProvider));
     }
+
+    private void removeOrTerminateSalary(Integer newSalary, Salary currentSalary) {
+        if (currentSalary.startsToday()){
+            currentSalary.change(newSalary);
+        }
+        else {
+            currentSalary.terminate();
+            addNewSalary(newSalary);
+        }
+    }
+
+    public Optional<Salary> getCurrentSalary(){
+        return salaries.stream()
+                .filter((salary) -> salary.isCurrent())
+                .findFirst();
+    }
+
+//    public Optional<Integer> getCurrentSalary() {
+//        for (Salary salary : salaries) {
+//            if (salary.getToDate().equals(MAX_DATE))
+//                return Optional.of(salary.getSalary());
+//        }
+//        return Optional.empty();
+//    }
 
     public void changeTitle(String title) {
-        Title newTitle = new Title(new Title.TitleId(empNo, title, LocalDate.now()), MAX_DATE);
+        Title newTitle = new Title(new Title.TitleId(empNo, title, timeProvider.today()), MAX_DATE);
         if (getCurrentTitle() != null) {
             titles.stream().forEach(tmpTitle -> {
                 if (tmpTitle.getToDate().equals(MAX_DATE))
-                    tmpTitle.setToDate(LocalDate.now());
+                    tmpTitle.setToDate(timeProvider.today());
             });
         }
         titles.add(newTitle);

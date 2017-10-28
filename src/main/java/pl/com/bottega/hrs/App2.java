@@ -1,9 +1,6 @@
 package pl.com.bottega.hrs;
 
-import pl.com.bottega.hrs.model.Address;
-import pl.com.bottega.hrs.model.Department;
-import pl.com.bottega.hrs.model.Employee;
-import pl.com.bottega.hrs.model.Gender;
+import pl.com.bottega.hrs.model.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -16,7 +13,7 @@ public class App2 {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory( "HRS" );
 
         Address address = new Address("al. Warszawska 100", "Lublin");
-        Employee employee = new Employee(500022, "Krzysz", "Jeżyna",  LocalDate.parse("1987-08-07"), address);
+        Employee employee = new Employee(500022, "Krzysz", "Jeżyna",  LocalDate.parse("1987-08-07"), address, new StandardTimeProvider());
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         em.persist(employee);
