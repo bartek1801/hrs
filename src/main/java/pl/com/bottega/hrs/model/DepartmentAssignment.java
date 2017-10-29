@@ -8,6 +8,25 @@ import java.time.LocalDate;
 @Table(name = "dept_emp")
 public class DepartmentAssignment {
 
+    @Embeddable
+    public static class DepartmentAssignmentId implements Serializable {
+
+        @Column(name = "emp_no")
+        private Integer empNo;
+
+        @ManyToOne
+        @JoinColumn(name = "dept_no")
+        private Department department;
+
+        DepartmentAssignmentId() {}
+
+        public DepartmentAssignmentId(Integer empNo, Department department) {
+            this.empNo = empNo;
+            this.department = department;
+        }
+
+    }
+
     @Transient
     private TimeProvider timeProvider;
 
@@ -20,31 +39,30 @@ public class DepartmentAssignment {
     @Column(name = "to_date")
     private LocalDate toDate;
 
-    public DepartmentAssignment() {
-    }
+    DepartmentAssignment() {}
 
     public DepartmentAssignment(Integer empNo, Department department, TimeProvider timeProvider) {
-        id = new DepartmentAssignmentId(empNo, department);
         this.timeProvider = timeProvider;
+        id = new DepartmentAssignmentId(empNo, department);
         fromDate = timeProvider.today();
-        toDate = Constants.MAX_DATE;
+        toDate = TimeProvider.MAX_DATE;
     }
-
 
     public Department getDepartment() {
         return id.department;
     }
 
     public boolean isAssigned(Department department) {
-        return toDate.isAfter(timeProvider.today()) && department.equals(id.department);
-    }
-
-    public void unassign() {
-        toDate = timeProvider.today();
+        return isCurrent() &&
+                department.equals(id.department);
     }
 
     public boolean isCurrent() {
         return toDate.isAfter(timeProvider.today());
+    }
+
+    public void unassign() {
+        toDate = timeProvider.today();
     }
 
     public LocalDate getFromDate() {
@@ -55,24 +73,4 @@ public class DepartmentAssignment {
         return toDate;
     }
 
-
-    @Embeddable
-    public static class DepartmentAssignmentId implements Serializable {
-
-        @Column(name = "emp_no")
-        private Integer empNo;
-
-        @ManyToOne
-        @JoinColumn(name = "dept_no")
-        private Department department;
-
-
-        public DepartmentAssignmentId(Integer empNo, Department department) {
-            this.empNo = empNo;
-            this.department = department;
-        }
-
-        public DepartmentAssignmentId() {
-        }
-    }
 }

@@ -5,55 +5,49 @@
              version="2.1">
 
     <persistence-unit name="HRS">
-
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-
         <properties>
             <property name="javax.persistence.jdbc.driver"
-                      value="com.mysql.jdbc.Driver" />
+                      value="com.mysql.jdbc.Driver"/>
 
             <property name="javax.persistence.jdbc.url"
-                      value="jdbc:mysql://localhost/employees?useSSL=false" />
+                      value="jdbc:mysql://localhost/employees?useSSL=false"/>
 
             <property name="javax.persistence.jdbc.user"
-                      value="root" />
+                      value="root"/>
 
             <property name="javax.persistence.jdbc.password"
-                      value="Leszek1801" />
+                      value="Leszek1801"/>
 
             <property name="hibernate.show_sql"
-                      value="true" />
+                      value="true"/>
 
             <property name="hibernate.hbm2ddl.auto"
-                      value="validate" />
+                      value="validate"/>
         </properties>
-
     </persistence-unit>
 
     <persistence-unit name="HRS-TEST">
-
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-
         <properties>
             <property name="javax.persistence.jdbc.driver"
-                      value="com.mysql.jdbc.Driver" />
+                      value="com.mysql.jdbc.Driver"/>
 
             <property name="javax.persistence.jdbc.url"
-                      value="jdbc:mysql://localhost/employees_test?useSSL=false" />
+                      value="jdbc:mysql://localhost/employees_test?useSSL=false"/>
 
             <property name="javax.persistence.jdbc.user"
-                      value="root" />
+                      value="root"/>
 
             <property name="javax.persistence.jdbc.password"
-                      value="Leszek1801" />
+                      value="Leszek1801"/>
 
             <property name="hibernate.show_sql"
-                      value="true" />
+                      value="true"/>
 
             <property name="hibernate.hbm2ddl.auto"
-                      value="create-drop" />
+                      value="create-drop"/>
         </properties>
-
     </persistence-unit>
 
 </persistence>

@@ -8,38 +8,63 @@ import java.time.LocalDate;
 @Table(name = "titles")
 public class Title {
 
+    @Embeddable
+    public static class TitleId implements Serializable {
+
+        @Column(name = "emp_no")
+        private Integer empNo;
+
+        @Transient
+        private TimeProvider timeProvider;
+
+        @Column(name = "from_date")
+        private LocalDate fromDate;
+
+        private String title;
+
+        TitleId() {
+        }
+
+        public TitleId(Integer empNo, String title, TimeProvider timeProvider) {
+            this.empNo = empNo;
+            this.timeProvider = timeProvider;
+            this.title = title;
+            this.fromDate = timeProvider.today();
+        }
+
+        public boolean startsToday() {
+            return fromDate.isEqual(timeProvider.today());
+        }
+
+    }
+
+    @Transient
+    private TimeProvider timeProvider;
+
     @EmbeddedId
     private TitleId id;
 
     @Column(name = "to_date")
     private LocalDate toDate;
 
-    @Transient
-    private TimeProvider timeProvider;
+    Title() {}
 
-    public Title() {
+    public Title(Integer empNo, String titleName, TimeProvider timeProvider) {
+        this.id = new TitleId(empNo, titleName, timeProvider);
+        this.timeProvider = timeProvider;
+        toDate = TimeProvider.MAX_DATE;
     }
 
-    public Title(Integer empNo, String title, TimeProvider timeProvider) {
-        this.id = new TitleId(empNo, title, timeProvider);
-        this.toDate = Constants.MAX_DATE;
-        this.timeProvider = timeProvider;
+    public String getName() {
+        return id.title;
     }
 
     public boolean isCurrent() {
         return toDate.isAfter(timeProvider.today());
     }
 
-    public String getTitleName() {
-        return id.title;
-    }
-
     public boolean startsToday() {
-        return toDate.isEqual(timeProvider.today());
-    }
-
-    public void change(String newTitle) {
-        id.change(newTitle);
+        return id.startsToday();
     }
 
     public void terminate() {
@@ -53,30 +78,5 @@ public class Title {
     public LocalDate getToDate() {
         return toDate;
     }
-
-    @Embeddable
-    public static class TitleId implements Serializable {
-        @Column(name = "emp_no")
-        private Integer emoNo;
-
-        private String title;
-
-        @Column(name = "from_date")
-        private LocalDate fromDate;
-
-        public TitleId() {
-        }
-
-        public TitleId(Integer emoNo, String title, TimeProvider timeProvider) {
-            this.emoNo = emoNo;
-            this.title = title;
-            this.fromDate = timeProvider.today();
-        }
-
-        public void change(String newTitle) {
-            this.title = newTitle;
-        }
-    }
-
 
 }

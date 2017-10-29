@@ -19,6 +19,9 @@ public class Address {
         this.city = city;
     }
 
+    Address() {
+    }
+
     @Override
     public String toString() {
         return "Address{" +
@@ -28,5 +31,4 @@ public class Address {
                 '}';
     }
 
-    public Address() {}
 }
