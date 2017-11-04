@@ -23,7 +23,6 @@ import static org.junit.Assert.assertNull;
 public class EntityManagerTest extends InfrastructureTest {
 
 
-
     @Test
     public void tracksChangesToEntities() {
         // given
@@ -121,6 +120,8 @@ public class EntityManagerTest extends InfrastructureTest {
         tmpEmployee.getSalaries().size();
     }
 
+
+
     private Employee createEmployee(String firstName) {
         Address address = new Address("al. Warszawska 10", "Lublin");
         return new Employee(1, firstName, "Nowak", LocalDate.now(), address, new StandardTimeProvider());
@@ -129,7 +130,5 @@ public class EntityManagerTest extends InfrastructureTest {
     private void updateFirstName(String newName, Employee employee) {
         employee.updateProfile(newName, "Nowak", LocalDate.now());
     }
-
-
 
 }

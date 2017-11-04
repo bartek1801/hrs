@@ -13,7 +13,6 @@ public class EmployeeSearchResults {
     private int pageNumber;
     private int pagesCount;
 
-
     public List<BasicEmployeeDto> getResults() {
         return results;
     }

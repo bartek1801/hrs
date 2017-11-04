@@ -20,6 +20,9 @@ public abstract class InfrastructureTest {
     @After
     public void cleanUp() {
         executeInTransaction((em) -> {
+            em.createNativeQuery("DELETE FROM salaries").executeUpdate();
+            em.createNativeQuery("DELETE FROM dept_emp").executeUpdate();
+            em.createNativeQuery("DELETE FROM departments").executeUpdate();
             em.createNativeQuery("DELETE FROM employees").executeUpdate();
         });
     }
@@ -32,7 +35,15 @@ public abstract class InfrastructureTest {
         em.getTransaction().commit();
     }
 
-    protected EntityManager createEntityManager(){
+    protected void executeInTransaction(EntityManager em, Runnable runnable) {
+        em.getTransaction().begin();
+        em.flush();
+        em.clear();
+        runnable.run();
+        em.getTransaction().commit();
+    }
+
+    protected EntityManager createEntityManager() {
         return emf.createEntityManager();
     }
 

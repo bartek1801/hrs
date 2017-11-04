@@ -1,14 +1,11 @@
 package pl.com.bottega.hrs.infrastructure;
 
-import pl.com.bottega.hrs.application.BasicEmployeeDto;
 import pl.com.bottega.hrs.application.EmployeeFinder;
 import pl.com.bottega.hrs.application.EmployeeSearchCriteria;
 import pl.com.bottega.hrs.application.EmployeeSearchResults;
-import pl.com.bottega.hrs.model.Employee;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.List;
 
 public class JPQLEmployeeFinder implements EmployeeFinder {
 
@@ -21,27 +18,28 @@ public class JPQLEmployeeFinder implements EmployeeFinder {
     @Override
     public EmployeeSearchResults search(EmployeeSearchCriteria criteria) {
         EmployeeSearchResults results = new EmployeeSearchResults();
-        String jpql = "SELECT NEW pl.com.bottega.hrs.application.BasicEmployeeDto (e.empNo , e.firstName, e.lastName) FROM Employee e ";
+        String jpql = "SELECT " +
+                "NEW pl.com.bottega.hrs.application.BasicEmployeeDto(e.empNo, e.firstName, e.lastName) " +
+                "FROM Employee e ";
         String whereJpql = " 1 = 1 ";
 
-        if (criteria.getLastNameQuery() != null){
-            whereJpql += " AND e.lastName LIKE :lastName";
+        if(criteria.getLastNameQuery() != null) {
+            whereJpql += "AND e.lastName LIKE :lastName ";
         }
 
-        if (criteria.getFirstNameQuery() != null){
+        if(criteria.getFirstNameQuery() != null) {
             whereJpql += " AND e.firstName LIKE :firstName ";
         }
 
-        Query query = entityManager.createQuery(jpql + " WHERE " + whereJpql);
-
-        if (criteria.getLastNameQuery() != null){
+        Query query = entityManager.createQuery(jpql + "WHERE" +  whereJpql);
+        if(criteria.getLastNameQuery() != null) {
             query.setParameter("lastName", criteria.getLastNameQuery() + "%");
         }
-
-        if (criteria.getFirstNameQuery() != null){
+        if(criteria.getFirstNameQuery() != null) {
             query.setParameter("firstName", criteria.getFirstNameQuery() + "%");
         }
         results.setResults(query.getResultList());
         return results;
     }
+
 }

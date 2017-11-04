@@ -5,7 +5,7 @@ import java.util.Collection;
 
 public class EmployeeSearchCriteria {
 
-    private String lastNameQuery,firstNameQuery;
+    private String lastNameQuery, firstNameQuery;
 
     private LocalDate birthDateFrom, birthDateTo;
 

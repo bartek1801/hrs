@@ -2,14 +2,22 @@ package pl.com.bottega.hrs.application;
 
 public class BasicEmployeeDto {
 
-    private String firstName, lastName;
-
     private Integer empNo;
+
+    private String firstName, lastName;
 
     public BasicEmployeeDto(Integer empNo, String firstName, String lastName) {
         this.empNo = empNo;
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public Integer getEmpNo() {
+        return empNo;
+    }
+
+    public void setEmpNo(Integer empNo) {
+        this.empNo = empNo;
     }
 
     public String getFirstName() {
@@ -26,13 +34,5 @@ public class BasicEmployeeDto {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public Integer getEmpNo() {
-        return empNo;
-    }
-
-    public void setEmpNo(Integer empNo) {
-        this.empNo = empNo;
     }
 }

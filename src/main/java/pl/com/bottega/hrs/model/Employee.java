@@ -32,7 +32,7 @@ public class Employee {
 
     @Enumerated(value = EnumType.STRING)
     @Column(columnDefinition = "enum('M', 'F')")
-    private Gender gender;
+    private Gender gender = Gender.M;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id")
@@ -68,6 +68,12 @@ public class Employee {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
+    }
+
+    public void updateProfile(String firstName, String lastName, LocalDate birthDate, Address address, Gender gender) {
+        updateProfile(firstName,lastName,birthDate);
+        this.address = address;
+        this.gender = gender;
     }
 
     public String getFirstName() {
@@ -169,5 +175,9 @@ public class Employee {
 
     public Collection<Title> getTitleHistory() {
         return titles;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 }
