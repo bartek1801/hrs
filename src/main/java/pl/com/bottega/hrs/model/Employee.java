@@ -64,6 +64,78 @@ public class Employee {
         this.address = address;
     }
 
+    public Integer getEmpNo() {
+        return empNo;
+    }
+
+    public void setEmpNo(Integer empNo) {
+        this.empNo = empNo;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public TimeProvider getTimeProvider() {
+        return timeProvider;
+    }
+
+    public void setTimeProvider(TimeProvider timeProvider) {
+        this.timeProvider = timeProvider;
+    }
+
+    public LocalDate getHireDate() {
+        return hireDate;
+    }
+
+    public void setHireDate(LocalDate hireDate) {
+        this.hireDate = hireDate;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public void setSalaries(Collection<Salary> salaries) {
+        this.salaries = salaries;
+    }
+
+    public Collection<Title> getTitles() {
+        return titles;
+    }
+
+    public void setTitles(Collection<Title> titles) {
+        this.titles = titles;
+    }
+
+    public Collection<DepartmentAssignment> getDepartmentAssignments() {
+        return departmentAssignments;
+    }
+
+    public void setDepartmentAssignments(Collection<DepartmentAssignment> departmentAssignments) {
+        this.departmentAssignments = departmentAssignments;
+    }
+
     public void updateProfile(String firstName, String lastName, LocalDate birthDate) {
         this.firstName = firstName;
         this.lastName = lastName;

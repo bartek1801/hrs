@@ -1,5 +1,7 @@
 package pl.com.bottega.hrs.model;
 
+import pl.com.bottega.hrs.infrastructure.StandardTimeProvider;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -25,10 +27,25 @@ public class DepartmentAssignment {
             this.department = department;
         }
 
+        public Integer getEmpNo() {
+            return empNo;
+        }
+
+        public void setEmpNo(Integer empNo) {
+            this.empNo = empNo;
+        }
+
+        public Department getDepartment() {
+            return department;
+        }
+
+        public void setDepartment(Department department) {
+            this.department = department;
+        }
     }
 
     @Transient
-    private TimeProvider timeProvider;
+    private TimeProvider timeProvider = new StandardTimeProvider();
 
     @EmbeddedId
     private DepartmentAssignmentId id;

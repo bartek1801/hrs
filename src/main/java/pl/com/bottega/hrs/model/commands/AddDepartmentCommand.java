@@ -2,31 +2,21 @@ package pl.com.bottega.hrs.model.commands;
 
 public class AddDepartmentCommand {
 
-    private String deptNo, deptName;
+    private String number, name;
 
-    private Integer empNo;
-
-    public Integer getEmpNo() {
-        return empNo;
+    public String getNumber() {
+        return number;
     }
 
-    public void setEmpNo(Integer empNo) {
-        this.empNo = empNo;
+    public void setNumber(String number) {
+        this.number = number;
     }
 
-    public String getDeptNo() {
-        return deptNo;
+    public String getName() {
+        return name;
     }
 
-    public void setDeptNo(String deptNo) {
-        this.deptNo = deptNo;
-    }
-
-    public String getDeptName() {
-        return deptName;
-    }
-
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
+    public void setName(String name) {
+        this.name = name;
     }
 }

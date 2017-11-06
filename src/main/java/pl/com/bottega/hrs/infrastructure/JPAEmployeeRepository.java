@@ -1,11 +1,13 @@
 package pl.com.bottega.hrs.infrastructure;
 
+import org.springframework.stereotype.Component;
 import pl.com.bottega.hrs.model.Employee;
 import pl.com.bottega.hrs.model.repositories.EmployeeRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+@Component
 public class JPAEmployeeRepository implements EmployeeRepository {
 
     private EntityManager entityManager;
@@ -18,7 +20,9 @@ public class JPAEmployeeRepository implements EmployeeRepository {
     public Integer generateNumber() {
         Query query = entityManager.createQuery("SELECT MAX(e.id) FROM Employee e");
         Integer result = (Integer) query.getSingleResult();
-        return result != null ?  result + 1 : 1;
+        if (result == null)
+            return 1;
+        return result + 1;
     }
 
     @Override

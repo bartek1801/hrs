@@ -1,11 +1,14 @@
 package pl.com.bottega.hrs.application;
 
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import pl.com.bottega.hrs.model.Department;
 import pl.com.bottega.hrs.model.Employee;
 import pl.com.bottega.hrs.model.commands.UnassignDepartmentCommand;
 import pl.com.bottega.hrs.model.repositories.DepartmentRepository;
 import pl.com.bottega.hrs.model.repositories.EmployeeRepository;
 
+@Component
 public class UnassignDepartmentHandler {
 
     private EmployeeRepository employeeRepository;
@@ -17,6 +20,7 @@ public class UnassignDepartmentHandler {
         this.departmentRepository = departmentRepository;
     }
 
+    @Transactional
     public void handle(UnassignDepartmentCommand cmd) {
         Employee employee = employeeRepository.get(cmd.getEmpNo());
         Department department = departmentRepository.get(cmd.getDeptNo());
