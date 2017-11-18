@@ -8,11 +8,11 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class EmployeeTest {
 
@@ -205,6 +205,28 @@ public class EmployeeTest {
                 Arrays.asList(t1, t2, TimeProvider.MAX_DATE),
                 history.stream().map(Title::getToDate).collect(Collectors.toList())
         );
+    }
+
+    @Test
+    public void shouldFireEmployee(){
+        //given
+        sut.changeSalary(SALARY);
+        sut.changeTitle("Cleaner");
+        sut.assignDepartment(d1);
+        sut.assignDepartment(d2);
+
+        //when
+        sut.fire();
+
+        //then
+        assertFalse(sut.getCurrentSalary().isPresent());
+        assertFalse(sut.getCurrentTitle().isPresent());
+        sut.getDepartmentAssignments().stream().
+                forEach(deptAsgn -> assertTrue(deptAsgn.getToDate().equals(LocalDate.now())));
+
+
+
+
     }
 
     private String getCurrentTitleName() {

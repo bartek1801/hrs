@@ -1,5 +1,8 @@
 package pl.com.bottega.hrs.model;
 
+import org.springframework.transaction.annotation.Transactional;
+import pl.com.bottega.hrs.infrastructure.StandardTimeProvider;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -19,7 +22,7 @@ public class Employee {
     private LocalDate birthDate;
 
     @Transient
-    private TimeProvider timeProvider;
+    private TimeProvider timeProvider = new StandardTimeProvider();
 
     @Column(name = "hire_date")
     private LocalDate hireDate;
@@ -36,6 +39,7 @@ public class Employee {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id")
+    @ElementCollection(fetch = FetchType.EAGER)
     private Address address;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -136,6 +140,8 @@ public class Employee {
         this.departmentAssignments = departmentAssignments;
     }
 
+
+
     public void updateProfile(String firstName, String lastName, LocalDate birthDate) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -161,11 +167,23 @@ public class Employee {
     }
 
     public void changeSalary(Integer newSalary) {
-        getCurrentSalary().ifPresent((currentSalary) -> {
-            removeOrTerminateSalary(currentSalary);
-        });
+        getCurrentSalary().ifPresent(this::removeOrTerminateSalary);
         addNewSalary(newSalary);
     }
+
+//    public void changeSalary(Integer newSalary) {
+//        Optional<Salary> current = getCurrentSalary();
+//        if(current.isPresent()) {
+//            Salary currentSalary = current.get();
+//            if(currentSalary.startsToday())
+//                currentSalary.update(newSalary);
+//            else {
+//                currentSalary.terminate();
+//                addNewSalary(newSalary);
+//            }
+//        } else
+//            addNewSalary(newSalary);
+//    }
 
     private void addNewSalary(Integer newSalary) {
         salaries.add(new Salary(empNo, newSalary, timeProvider));
@@ -251,5 +269,20 @@ public class Employee {
 
     public String getLastName() {
         return lastName;
+    }
+
+    @Transactional
+    public void fire(){
+        terminateEmployeeTitle();
+        terminateEmployeeSalary();
+        departmentAssignments.forEach((deptAsgn) -> unassignDepartment(deptAsgn.getDepartment()));
+    }
+
+    private void terminateEmployeeSalary() {
+        this.getCurrentSalary().get().setToDate(LocalDate.now());
+    }
+
+    private void terminateEmployeeTitle() {
+        this.getCurrentTitle().get().setToDate(LocalDate.now());
     }
 }

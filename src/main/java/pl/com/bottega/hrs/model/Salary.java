@@ -10,6 +10,9 @@ import java.time.LocalDate;
 @Table(name = "salaries")
 public class Salary {
 
+
+
+
     @Embeddable
     public static class SalaryId implements Serializable {
 
@@ -57,6 +60,10 @@ public class Salary {
         toDate = TimeProvider.MAX_DATE;
     }
 
+//    public void update(Integer newSalary) {
+//        this.salary = newSalary;
+//    }
+
     public boolean isCurrent() {
         return toDate.isAfter(timeProvider.today());
     }
@@ -79,6 +86,10 @@ public class Salary {
 
     public LocalDate getToDate() {
         return toDate;
+    }
+
+    public void setToDate(LocalDate toDate) {
+        this.toDate = toDate;
     }
 
 }

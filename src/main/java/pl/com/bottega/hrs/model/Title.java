@@ -17,7 +17,7 @@ public class Title {
         private Integer empNo;
 
         @Transient
-        private TimeProvider timeProvider;
+        private TimeProvider timeProvider = new StandardTimeProvider();
 
         @Column(name = "from_date")
         private LocalDate fromDate;
@@ -55,6 +55,19 @@ public class Title {
         this.id = new TitleId(empNo, titleName, timeProvider);
         this.timeProvider = timeProvider;
         toDate = TimeProvider.MAX_DATE;
+    }
+
+
+    public TitleId getId() {
+        return id;
+    }
+
+    public void setId(TitleId id) {
+        this.id = id;
+    }
+
+    public void setToDate(LocalDate toDate) {
+        this.toDate = toDate;
     }
 
     public String getName() {

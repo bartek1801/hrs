@@ -7,66 +7,60 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.com.bottega.hrs.application.*;
 import pl.com.bottega.hrs.model.Address;
-import pl.com.bottega.hrs.model.Department;
 import pl.com.bottega.hrs.model.Gender;
 import pl.com.bottega.hrs.model.commands.AddDepartmentCommand;
 import pl.com.bottega.hrs.model.commands.AddEmployeeCommand;
+import pl.com.bottega.hrs.model.commands.ChangeEmployeeTitleCommand;
 
+import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class CreateEmployeeTest {
+public class ChangeEmployeeTitleTest {
+
+    @Autowired
+    private AddDepartmentHandler addDepartmentHandler;
 
     @Autowired
     private AddEmployeeHandler addEmployeeHandler;
 
     @Autowired
-    private EmployeeFinder employeeFinder;
+    private ChangeEmployeeTitleHandler changeEmployeeTitleHandler;
 
     @Autowired
-    private AddDepartmentHandler addDepartmentHandler;
+    private EmployeeFinder employeeFinder;
 
     @Test
-    public void shouldCreateEmployeeWithAllDetails(){
+    public void shouldChangeEmployeeTitle(){
         //given
         AddDepartmentCommand addDepartmentCommand = new AddDepartmentCommand();
         addDepartmentCommand.setName("Marketing");
         addDepartmentCommand.setNumber("d1");
         addDepartmentHandler.handle(addDepartmentCommand);
-
-        //when
         AddEmployeeCommand addEmployeeCommand = new AddEmployeeCommand();
-        addEmployeeCommand.setFirstName("Janek");
-        addEmployeeCommand.setLastName("Nowak");
-        addEmployeeCommand.setAddress(new Address("TestStreet", "TestCity"));
-        addEmployeeCommand.setBirthDate(LocalDate.parse("1990-01-01"));
+        addEmployeeCommand.setFirstName("Jan");
+        addEmployeeCommand.setLastName("Nowakowski");
+        addEmployeeCommand.setAddress(new Address("testStreet", "testCity"));
+        addEmployeeCommand.setBirthDate(LocalDate.parse("1990-01-18"));
         addEmployeeCommand.setDeptNo("d1");
         addEmployeeCommand.setGender(Gender.M);
-        addEmployeeCommand.setSalary(50000);
-        addEmployeeCommand.setTitle("Junior Developer");
+        addEmployeeCommand.setSalary(25000);
+        addEmployeeCommand.setTitle("Expert");
         addEmployeeHandler.handle(addEmployeeCommand);
+
+        //when
+        ChangeEmployeeTitleCommand cmd = new ChangeEmployeeTitleCommand();
+        cmd.setEmpNo(1);
+        cmd.setTitle("Accountant");
+        changeEmployeeTitleHandler.handle(cmd);
 
         //then
         DetailedEmployeeDto empDto = employeeFinder.getEmployeeDetails(1);
-        assertEquals("Janek", empDto.getFirstName());
-        assertEquals("Nowak", empDto.getLastName());
-        assertEquals( "TestStreet", empDto.getAddress().getStreet());
-        assertEquals("TestCity", empDto.getAddress().getCity());
-        assertEquals(LocalDate.parse("1990-01-01"), empDto.getBirthDate());
-        assertEquals(Arrays.asList("d1"), empDto.getDeptNo());
-        assertEquals(Gender.M, empDto.getGender());
-        assertEquals(Integer.valueOf(50000), empDto.getSalary().get());
-        assertEquals("Junior Developer", empDto.getTitle().get());
-
+        assertEquals("Accountant", empDto.getTitle()); //TODO popraw test
 
     }
-
-
-
 
 }

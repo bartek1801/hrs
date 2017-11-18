@@ -1,6 +1,8 @@
 package pl.com.bottega.hrs.infrastructure;
 
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.com.bottega.hrs.model.Employee;
 import pl.com.bottega.hrs.model.repositories.EmployeeRepository;
 
@@ -27,7 +29,8 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 
     @Override
     public void save(Employee employee) {
-        entityManager.persist(employee);
+        //entityManager.persist(employee);
+        entityManager.merge(employee);
     }
 
     @Override
