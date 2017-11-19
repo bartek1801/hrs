@@ -1,14 +1,18 @@
 package pl.com.bottega.hrs.model.commands;
 
-public class FireEmployeeCommand {
+public class FireEmployeeCommand implements Command  {
 
-    private Integer empNo;
+    private int empNo;
 
-    public Integer getEmpNo() {
+    public int getEmpNo() {
         return empNo;
     }
 
-    public void setEmpNo(Integer empNo) {
+    public void setEmpNo(int empNo) {
         this.empNo = empNo;
+    }
+
+    public void validate(ValidationErrors errors){
+        validatePresence(errors,"empNo", empNo);
     }
 }

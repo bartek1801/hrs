@@ -10,5 +10,4 @@ public interface EmployeeRepository {
 
     Employee get(Integer empNo);
 
-
 }

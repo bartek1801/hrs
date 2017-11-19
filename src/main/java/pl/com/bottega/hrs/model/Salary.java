@@ -1,5 +1,6 @@
 package pl.com.bottega.hrs.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.com.bottega.hrs.infrastructure.StandardTimeProvider;
 
 import javax.persistence.*;
@@ -10,9 +11,6 @@ import java.time.LocalDate;
 @Table(name = "salaries")
 public class Salary {
 
-
-
-
     @Embeddable
     public static class SalaryId implements Serializable {
 
@@ -20,7 +18,7 @@ public class Salary {
         private Integer empNo;
 
         @Transient
-        private TimeProvider timeProvider = new StandardTimeProvider();
+        private TimeProvider timeProvider;
 
         @Column(name = "from_date")
         private LocalDate fromDate;
@@ -37,15 +35,15 @@ public class Salary {
         public boolean startsToday() {
             return fromDate.isEqual(timeProvider.today());
         }
-    }
 
+    }
     @EmbeddedId
     private SalaryId id;
 
     private Integer salary;
 
     @Transient
-    private TimeProvider timeProvider = new StandardTimeProvider();
+    private TimeProvider timeProvider;
 
     @Column(name = "to_date")
     private LocalDate toDate;
@@ -59,10 +57,6 @@ public class Salary {
         this.timeProvider = timeProvider;
         toDate = TimeProvider.MAX_DATE;
     }
-
-//    public void update(Integer newSalary) {
-//        this.salary = newSalary;
-//    }
 
     public boolean isCurrent() {
         return toDate.isAfter(timeProvider.today());
@@ -88,8 +82,14 @@ public class Salary {
         return toDate;
     }
 
-    public void setToDate(LocalDate toDate) {
-        this.toDate = toDate;
+    public void update(Integer newSalary) {
+        this.salary = newSalary;
+    }
+
+    @Autowired
+    private void setTimeProvider(TimeProvider timeProvider) {
+        this.timeProvider = timeProvider;
+        id.timeProvider = timeProvider;
     }
 
 }

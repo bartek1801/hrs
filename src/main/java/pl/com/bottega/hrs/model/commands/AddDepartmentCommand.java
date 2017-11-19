@@ -1,6 +1,6 @@
 package pl.com.bottega.hrs.model.commands;
 
-public class AddDepartmentCommand {
+public class AddDepartmentCommand implements Command {
 
     private String number, name;
 
@@ -19,4 +19,10 @@ public class AddDepartmentCommand {
     public void setName(String name) {
         this.name = name;
     }
+
+    public void validate(ValidationErrors errors){
+        validatePresence(errors,"number", number);
+        validatePresence(errors,"name", name);
+    }
+
 }

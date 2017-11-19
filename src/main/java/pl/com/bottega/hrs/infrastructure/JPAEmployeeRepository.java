@@ -1,13 +1,10 @@
 package pl.com.bottega.hrs.infrastructure;
 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import pl.com.bottega.hrs.model.Employee;
 import pl.com.bottega.hrs.model.repositories.EmployeeRepository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 @Component
 public class JPAEmployeeRepository implements EmployeeRepository {
@@ -20,24 +17,25 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 
     @Override
     public Integer generateNumber() {
-        Query query = entityManager.createQuery("SELECT MAX(e.id) FROM Employee e");
-        Integer result = (Integer) query.getSingleResult();
-        if (result == null)
+        Integer n = (Integer) entityManager.createQuery(
+                "SELECT MAX(e.empNo) + 1 FROM Employee e"
+        ).getSingleResult();
+        if (n == null)
             return 1;
-        return result + 1;
+        return n;
     }
 
     @Override
     public void save(Employee employee) {
-        //entityManager.persist(employee);
-        entityManager.merge(employee);
+        entityManager.persist(employee);
     }
 
     @Override
     public Employee get(Integer empNo) {
         Employee employee = entityManager.find(Employee.class, empNo);
-        if (employee == null)
+        if(employee == null)
             throw new NoSuchEntityException();
         return employee;
     }
+
 }

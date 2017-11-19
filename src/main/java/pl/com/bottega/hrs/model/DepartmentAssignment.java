@@ -1,5 +1,6 @@
 package pl.com.bottega.hrs.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.com.bottega.hrs.infrastructure.StandardTimeProvider;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "dept_emp")
 public class DepartmentAssignment {
+
 
     @Embeddable
     public static class DepartmentAssignmentId implements Serializable {
@@ -27,25 +29,11 @@ public class DepartmentAssignment {
             this.department = department;
         }
 
-        public Integer getEmpNo() {
-            return empNo;
-        }
-
-        public void setEmpNo(Integer empNo) {
-            this.empNo = empNo;
-        }
-
-        public Department getDepartment() {
-            return department;
-        }
-
-        public void setDepartment(Department department) {
-            this.department = department;
-        }
     }
 
     @Transient
-    private TimeProvider timeProvider = new StandardTimeProvider();
+    @Autowired
+    private TimeProvider timeProvider;
 
     @EmbeddedId
     private DepartmentAssignmentId id;

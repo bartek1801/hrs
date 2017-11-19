@@ -1,5 +1,6 @@
 package pl.com.bottega.hrs.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.com.bottega.hrs.infrastructure.StandardTimeProvider;
 
 import javax.persistence.*;
@@ -13,22 +14,22 @@ public class Title {
     @Embeddable
     public static class TitleId implements Serializable {
 
-        @Column(name = "emp_no")
-        private Integer empNo;
+        @JoinColumn(name = "emp_no")
+        @ManyToOne
+        private Employee employee;
 
         @Transient
-        private TimeProvider timeProvider = new StandardTimeProvider();
+        private TimeProvider timeProvider;
 
         @Column(name = "from_date")
         private LocalDate fromDate;
 
         private String title;
 
-        TitleId() {
-        }
+        TitleId() {}
 
-        public TitleId(Integer empNo, String title, TimeProvider timeProvider) {
-            this.empNo = empNo;
+        public TitleId(Employee employee, String title, TimeProvider timeProvider) {
+            this.employee = employee;
             this.timeProvider = timeProvider;
             this.title = title;
             this.fromDate = timeProvider.today();
@@ -41,7 +42,7 @@ public class Title {
     }
 
     @Transient
-    private TimeProvider timeProvider = new StandardTimeProvider();
+    private TimeProvider timeProvider;
 
     @EmbeddedId
     private TitleId id;
@@ -51,23 +52,10 @@ public class Title {
 
     Title() {}
 
-    public Title(Integer empNo, String titleName, TimeProvider timeProvider) {
-        this.id = new TitleId(empNo, titleName, timeProvider);
+    public Title(Employee employee, String titleName, TimeProvider timeProvider) {
+        this.id = new TitleId(employee, titleName, timeProvider);
         this.timeProvider = timeProvider;
         toDate = TimeProvider.MAX_DATE;
-    }
-
-
-    public TitleId getId() {
-        return id;
-    }
-
-    public void setId(TitleId id) {
-        this.id = id;
-    }
-
-    public void setToDate(LocalDate toDate) {
-        this.toDate = toDate;
     }
 
     public String getName() {
@@ -92,6 +80,12 @@ public class Title {
 
     public LocalDate getToDate() {
         return toDate;
+    }
+
+    @Autowired
+    private void setTimeProvider(TimeProvider timeProvider) {
+        this.timeProvider = timeProvider;
+        id.timeProvider = timeProvider;
     }
 
 }

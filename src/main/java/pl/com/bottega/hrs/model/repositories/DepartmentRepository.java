@@ -8,5 +8,4 @@ public interface DepartmentRepository {
 
     void save(Department department);
 
-
 }

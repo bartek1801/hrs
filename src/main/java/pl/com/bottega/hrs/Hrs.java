@@ -8,6 +8,6 @@ public class Hrs {
 
     public static void main(String[] args) {
         SpringApplication.run(Hrs.class, args);
-
     }
+
 }

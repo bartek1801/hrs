@@ -1,7 +1,12 @@
 package pl.com.bottega.hrs.model;
 
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
+
 import java.time.*;
 
+@Component
+@Primary
 public class TimeMachine implements TimeProvider {
 
     private Clock currentClock;

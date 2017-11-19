@@ -7,20 +7,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.com.bottega.hrs.application.*;
 import pl.com.bottega.hrs.model.Address;
-import pl.com.bottega.hrs.model.Department;
 import pl.com.bottega.hrs.model.Gender;
 import pl.com.bottega.hrs.model.commands.AddDepartmentCommand;
 import pl.com.bottega.hrs.model.commands.AddEmployeeCommand;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class CreateEmployeeTest {
+public class CreateEmployeeTest extends AcceptanceTest {
 
     @Autowired
     private AddEmployeeHandler addEmployeeHandler;
@@ -32,18 +30,18 @@ public class CreateEmployeeTest {
     private AddDepartmentHandler addDepartmentHandler;
 
     @Test
-    public void shouldCreateEmployeeWithAllDetails(){
-        //given
+    public void shouldCreateEmployee() {
+        // given
         AddDepartmentCommand addDepartmentCommand = new AddDepartmentCommand();
         addDepartmentCommand.setName("Marketing");
         addDepartmentCommand.setNumber("d1");
         addDepartmentHandler.handle(addDepartmentCommand);
 
-        //when
+        // when
         AddEmployeeCommand addEmployeeCommand = new AddEmployeeCommand();
         addEmployeeCommand.setFirstName("Janek");
         addEmployeeCommand.setLastName("Nowak");
-        addEmployeeCommand.setAddress(new Address("TestStreet", "TestCity"));
+        addEmployeeCommand.setAddress(new Address("test", "test"));
         addEmployeeCommand.setBirthDate(LocalDate.parse("1990-01-01"));
         addEmployeeCommand.setDeptNo("d1");
         addEmployeeCommand.setGender(Gender.M);
@@ -51,22 +49,17 @@ public class CreateEmployeeTest {
         addEmployeeCommand.setTitle("Junior Developer");
         addEmployeeHandler.handle(addEmployeeCommand);
 
-        //then
-        DetailedEmployeeDto empDto = employeeFinder.getEmployeeDetails(1);
-        assertEquals("Janek", empDto.getFirstName());
-        assertEquals("Nowak", empDto.getLastName());
-        assertEquals( "TestStreet", empDto.getAddress().getStreet());
-        assertEquals("TestCity", empDto.getAddress().getCity());
-        assertEquals(LocalDate.parse("1990-01-01"), empDto.getBirthDate());
-        assertEquals(Arrays.asList("d1"), empDto.getDeptNo());
-        assertEquals(Gender.M, empDto.getGender());
-        assertEquals(Integer.valueOf(50000), empDto.getSalary().get());
-        assertEquals("Junior Developer", empDto.getTitle().get());
-
-
+        // then
+        DetailedEmployeeDto employeeDto = employeeFinder.getEmployeeDetails(1);
+        assertEquals("Janek", employeeDto.getFirstName());
+        assertEquals("Nowak", employeeDto.getLastName());
+        assertEquals(new Address("test", "test"), employeeDto.getAddress());
+        assertEquals(LocalDate.parse("1990-01-01"), employeeDto.getBirthDate());
+        assertEquals(LocalDate.now(), employeeDto.getHireDate());
+        assertEquals(Arrays.asList("d1"), employeeDto.getDepartmentNumbers());
+        assertEquals(Gender.M, employeeDto.getGender());
+        assertEquals(Integer.valueOf(50000), employeeDto.getSalary().get());
+        assertEquals("Junior Developer", employeeDto.getTitle().get());
     }
-
-
-
 
 }

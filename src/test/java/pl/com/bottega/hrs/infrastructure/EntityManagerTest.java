@@ -112,8 +112,6 @@ public class EntityManagerTest extends InfrastructureTest {
         tmpEmployee.getSalaries().size();
     }
 
-
-
     private Employee createEmployee(String firstName) {
         Address address = new Address("al. Warszawska 10", "Lublin");
         return new Employee(1, firstName, "Nowak", LocalDate.now(), address, new StandardTimeProvider());

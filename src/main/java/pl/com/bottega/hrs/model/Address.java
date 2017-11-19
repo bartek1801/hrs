@@ -31,6 +31,32 @@ public class Address {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Address address = (Address) o;
+
+        if (!street.equals(address.street)) return false;
+        return city.equals(address.city);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = street.hashCode();
+        result = 31 * result + city.hashCode();
+        return result;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
     public String getStreet() {
         return street;
     }

@@ -3,7 +3,6 @@ package pl.com.bottega.hrs.application;
 import java.time.LocalDate;
 import java.util.Collection;
 
-
 public class EmployeeSearchCriteria {
 
     private String lastNameQuery, firstNameQuery;

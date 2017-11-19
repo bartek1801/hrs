@@ -1,71 +1,69 @@
 package pl.com.bottega.hrs.acceptance;
 
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.com.bottega.hrs.application.*;
+import pl.com.bottega.hrs.application.FireEmployeeHandler;
 import pl.com.bottega.hrs.model.Address;
 import pl.com.bottega.hrs.model.Gender;
 import pl.com.bottega.hrs.model.commands.AddDepartmentCommand;
 import pl.com.bottega.hrs.model.commands.AddEmployeeCommand;
 import pl.com.bottega.hrs.model.commands.FireEmployeeCommand;
-import pl.com.bottega.hrs.model.repositories.DepartmentRepository;
-import pl.com.bottega.hrs.model.repositories.EmployeeRepository;
 
 import java.time.LocalDate;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class FireEmployeeTest {
-
-    @Autowired
-    private FireEmployeeHandler fireEmployeeHandler;
-
-    @Autowired
-    private AddEmployeeHandler addEmployeeHandler;
+public class FireEmployeeTest  extends AcceptanceTest {
 
     @Autowired
     private AddDepartmentHandler addDepartmentHandler;
 
     @Autowired
+    private AddEmployeeHandler addEmployeeHandler;
+
+    @Autowired
     private EmployeeFinder employeeFinder;
 
+    @Autowired
+    private FireEmployeeHandler fireHandler;
+
     @Test
-    public void shouldFireEmployee(){
+    public void shouldFireEmployee() {
         //given
-        AddDepartmentCommand addDepartmentCommand = new AddDepartmentCommand();
-        addDepartmentCommand.setName("Marketing");
-        addDepartmentCommand.setNumber("d1");
-        addDepartmentHandler.handle(addDepartmentCommand);
-        AddEmployeeCommand addEmployeeCommand = new AddEmployeeCommand();
-        addEmployeeCommand.setFirstName("Janek");
-        addEmployeeCommand.setLastName("Nowak");
-        addEmployeeCommand.setAddress(new Address("TestStreet", "TestCity"));
-        addEmployeeCommand.setBirthDate(LocalDate.parse("1990-01-01"));
-        addEmployeeCommand.setDeptNo("d1");
-        addEmployeeCommand.setGender(Gender.M);
-        addEmployeeCommand.setSalary(50000);
-        addEmployeeCommand.setTitle("Junior Developer");
-        addEmployeeHandler.handle(addEmployeeCommand);
+        String deptNo = "d001";
+        AddDepartmentCommand deptCmd = new AddDepartmentCommand();
+        deptCmd.setNumber(deptNo);
+        deptCmd.setName("Maintentance");
+        addDepartmentHandler.handle(deptCmd);
+        AddEmployeeCommand cmd = new AddEmployeeCommand();
+        cmd.setFirstName("Janek");
+        cmd.setLastName("Nowak");
+        cmd.setAddress(new Address("Krancowa", "Lublin"));
+        cmd.setBirthDate(LocalDate.parse("1980-01-01"));
+        cmd.setGender(Gender.M);
+        cmd.setSalary(500000);
+        cmd.setTitle("Manager");
+        cmd.setDeptNo(deptNo);
+        addEmployeeHandler.handle(cmd);
 
         //when
-        FireEmployeeCommand fireEmployeeCommand = new FireEmployeeCommand();
-        fireEmployeeCommand.setEmpNo(1);
-        fireEmployeeHandler.handle(fireEmployeeCommand);
+        FireEmployeeCommand fireCmd = new FireEmployeeCommand();
+        fireCmd.setEmpNo(1);
+        fireHandler.handle(fireCmd);
 
-        //then
-        DetailedEmployeeDto empDto = employeeFinder.getEmployeeDetails(1);
+        // then
+        DetailedEmployeeDto employeeDto = employeeFinder.getEmployeeDetails(1);
+        assertEquals(0, employeeDto.getDepartmentNumbers().size());
+        assertFalse(employeeDto.getSalary().isPresent());
+        assertFalse(employeeDto.getTitle().isPresent());
 
-        assertFalse(empDto.getSalary().isPresent());
-        assertFalse(empDto.getTitle().isPresent());
-        assertFalse(empDto.getTitle().isPresent());
 
     }
-
 }

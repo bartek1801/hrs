@@ -5,7 +5,6 @@ import pl.com.bottega.hrs.model.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class DetailedEmployeeDto extends BasicEmployeeDto {
@@ -20,7 +19,7 @@ public class DetailedEmployeeDto extends BasicEmployeeDto {
 
     private Optional<String> title;
 
-    private List<String> deptNo;
+    private List<String> departmentNumbers;
 
     private List<SalaryDto> salaryHistory;
 
@@ -32,18 +31,19 @@ public class DetailedEmployeeDto extends BasicEmployeeDto {
         super(employee.getEmpNo(), employee.getFirstName(), employee.getLastName());
         this.birthDate = employee.getBirthDate();
         this.hireDate = employee.getHireDate();
-        this.gender = employee.getGender();
         this.address = employee.getAddress();
         this.salary = employee.getCurrentSalary().map(Salary::getValue);
-        this.title = employee.getCurrentTitle().map(Title ::getName);
-        this.deptNo = employee.getCurrentDepartments().stream().
-                map(Department::getNumber).collect(Collectors.toList());
+        this.title = employee.getCurrentTitle().map(Title::getName);
+        this.gender = employee.getGender();
+        this.departmentNumbers = employee.getCurrentDepartments().stream().
+                map(Department::getNumber).
+                collect(Collectors.toList());
         this.salaryHistory = employee.getSalaries().stream().
                 map(SalaryDto::new).collect(Collectors.toList());
         this.departmentHistory = employee.getDepartmentsHistory().stream().
                 map(DepartmentDto::new).collect(Collectors.toList());
         this.titleHistory = employee.getTitleHistory().stream().
-                map(TitleDto :: new).collect(Collectors.toList());
+                map(TitleDto::new).collect(Collectors.toList());
     }
 
     public LocalDate getBirthDate() {
@@ -94,12 +94,12 @@ public class DetailedEmployeeDto extends BasicEmployeeDto {
         this.title = title;
     }
 
-    public List<String> getDeptNo() {
-        return deptNo;
+    public List<String> getDepartmentNumbers() {
+        return departmentNumbers;
     }
 
-    public void setDeptNo(List<String> deptNo) {
-        this.deptNo = deptNo;
+    public void setDepartmentNumbers(List<String> departmentNumbers) {
+        this.departmentNumbers = departmentNumbers;
     }
 
     public List<SalaryDto> getSalaryHistory() {

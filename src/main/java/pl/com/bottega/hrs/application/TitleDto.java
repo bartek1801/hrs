@@ -11,9 +11,9 @@ public class TitleDto {
     private String title;
 
     public TitleDto(Title title) {
+        fromDate = title.getFromDate();
+        toDate = title.getToDate();
         this.title = title.getName();
-        this.fromDate = title.getFromDate();
-        this.fromDate = title.getToDate();
     }
 
     public LocalDate getFromDate() {

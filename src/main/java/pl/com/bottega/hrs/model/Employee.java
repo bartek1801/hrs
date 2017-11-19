@@ -1,6 +1,7 @@
 package pl.com.bottega.hrs.model;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.hibernate.collection.internal.PersistentBag;
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.com.bottega.hrs.infrastructure.StandardTimeProvider;
 
 import javax.persistence.*;
@@ -22,7 +23,8 @@ public class Employee {
     private LocalDate birthDate;
 
     @Transient
-    private TimeProvider timeProvider = new StandardTimeProvider();
+    @Autowired
+    private TimeProvider timeProvider;
 
     @Column(name = "hire_date")
     private LocalDate hireDate;
@@ -39,15 +41,13 @@ public class Employee {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id")
-    @ElementCollection(fetch = FetchType.EAGER)
     private Address address;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "emp_no")
     private Collection<Salary> salaries = new LinkedList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "emp_no")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "id.employee")
     private Collection<Title> titles = new LinkedList<>();
 
 
@@ -68,80 +68,6 @@ public class Employee {
         this.address = address;
     }
 
-    public Integer getEmpNo() {
-        return empNo;
-    }
-
-    public void setEmpNo(Integer empNo) {
-        this.empNo = empNo;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public TimeProvider getTimeProvider() {
-        return timeProvider;
-    }
-
-    public void setTimeProvider(TimeProvider timeProvider) {
-        this.timeProvider = timeProvider;
-    }
-
-    public LocalDate getHireDate() {
-        return hireDate;
-    }
-
-    public void setHireDate(LocalDate hireDate) {
-        this.hireDate = hireDate;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public void setSalaries(Collection<Salary> salaries) {
-        this.salaries = salaries;
-    }
-
-    public Collection<Title> getTitles() {
-        return titles;
-    }
-
-    public void setTitles(Collection<Title> titles) {
-        this.titles = titles;
-    }
-
-    public Collection<DepartmentAssignment> getDepartmentAssignments() {
-        return departmentAssignments;
-    }
-
-    public void setDepartmentAssignments(Collection<DepartmentAssignment> departmentAssignments) {
-        this.departmentAssignments = departmentAssignments;
-    }
-
-
-
     public void updateProfile(String firstName, String lastName, LocalDate birthDate) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -149,7 +75,7 @@ public class Employee {
     }
 
     public void updateProfile(String firstName, String lastName, LocalDate birthDate, Address address, Gender gender) {
-        updateProfile(firstName,lastName,birthDate);
+        updateProfile(firstName, lastName, birthDate);
         this.address = address;
         this.gender = gender;
     }
@@ -167,34 +93,21 @@ public class Employee {
     }
 
     public void changeSalary(Integer newSalary) {
-        getCurrentSalary().ifPresent(this::removeOrTerminateSalary);
-        addNewSalary(newSalary);
+        Optional<Salary> current = getCurrentSalary();
+        if (current.isPresent()) {
+            Salary currentSalary = current.get();
+            if (currentSalary.startsToday())
+                currentSalary.update(newSalary);
+            else {
+                currentSalary.terminate();
+                addNewSalary(newSalary);
+            }
+        } else
+            addNewSalary(newSalary);
     }
-
-//    public void changeSalary(Integer newSalary) {
-//        Optional<Salary> current = getCurrentSalary();
-//        if(current.isPresent()) {
-//            Salary currentSalary = current.get();
-//            if(currentSalary.startsToday())
-//                currentSalary.update(newSalary);
-//            else {
-//                currentSalary.terminate();
-//                addNewSalary(newSalary);
-//            }
-//        } else
-//            addNewSalary(newSalary);
-//    }
 
     private void addNewSalary(Integer newSalary) {
         salaries.add(new Salary(empNo, newSalary, timeProvider));
-    }
-
-    private void removeOrTerminateSalary(Salary currentSalary) {
-        if (currentSalary.startsToday()) {
-            salaries.remove(currentSalary);
-        } else {
-            currentSalary.terminate();
-        }
     }
 
     public void assignDepartment(Department department) {
@@ -260,7 +173,7 @@ public class Employee {
             else
                 t.terminate();
         });
-        titles.add(new Title(empNo, titleName, timeProvider));
+        titles.add(new Title(this, titleName, timeProvider));
     }
 
     public Collection<Title> getTitleHistory() {
@@ -271,18 +184,41 @@ public class Employee {
         return lastName;
     }
 
-    @Transactional
-    public void fire(){
-        terminateEmployeeTitle();
-        terminateEmployeeSalary();
-        departmentAssignments.forEach((deptAsgn) -> unassignDepartment(deptAsgn.getDepartment()));
+    public Integer getEmpNo() {
+        return empNo;
     }
 
-    private void terminateEmployeeSalary() {
-        this.getCurrentSalary().get().setToDate(LocalDate.now());
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
-    private void terminateEmployeeTitle() {
-        this.getCurrentTitle().get().setToDate(LocalDate.now());
+    public LocalDate getHireDate() {
+        return hireDate;
     }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void fire() {
+        terminateDepartmentAssignments();
+        terminateTitle();
+        terminateSalary();
+    }
+
+    private void terminateSalary() {
+        salaries.stream().filter(Salary::isCurrent).forEach(Salary::terminate);
+    }
+
+    private void terminateTitle() {
+        titles.stream().filter(Title::isCurrent).forEach(Title::terminate);
+    }
+
+    private void terminateDepartmentAssignments() {
+        departmentAssignments.stream().
+                filter(DepartmentAssignment::isCurrent).
+                map(DepartmentAssignment::getDepartment).
+                forEach(this::unassignDepartment);
+    }
+
 }

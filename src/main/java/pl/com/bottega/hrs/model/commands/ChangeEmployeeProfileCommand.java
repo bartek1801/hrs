@@ -1,3 +1,4 @@
+
 package pl.com.bottega.hrs.model.commands;
 
 import pl.com.bottega.hrs.model.Address;
@@ -5,7 +6,7 @@ import pl.com.bottega.hrs.model.Gender;
 
 import java.time.LocalDate;
 
-public class ChangeEmployeeProfileCommand {
+public class ChangeEmployeeProfileCommand implements Command {
 
     private String firstName, lastName;
 
@@ -15,7 +16,7 @@ public class ChangeEmployeeProfileCommand {
 
     private Gender gender;
 
-    private int empNo;
+    private Integer empNo;
 
     public String getFirstName() {
         return firstName;
@@ -57,11 +58,26 @@ public class ChangeEmployeeProfileCommand {
         this.gender = gender;
     }
 
-    public int getEmpNo() {
+    public Integer getEmpNo() {
         return empNo;
     }
 
-    public void setEmpNo(int empNo) {
+    public void setEmpNo(Integer empNo) {
         this.empNo = empNo;
     }
+
+    public void validate(ValidationErrors errors){
+        validatePresence(errors,"firstName", firstName);
+        validatePresence(errors,"lastName", lastName);
+        validatePresence(errors,"birthDate", birthDate);
+        validatePresence(errors,"address.street",address.getStreet());
+        validatePresence(errors,"address.city", address.getCity());
+        validatePresence(errors,"gender",gender);
+        validatePresence(errors,"empNo",empNo);
+
+        if(birthDate != null && birthDate.isAfter(LocalDate.now())){
+            errors.add("birthDate", "mast be in the past");
+        }
+    }
+
 }

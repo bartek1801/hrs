@@ -48,5 +48,4 @@ public class JPQLEmployeeFinder implements EmployeeFinder {
         return null;
     }
 
-
 }

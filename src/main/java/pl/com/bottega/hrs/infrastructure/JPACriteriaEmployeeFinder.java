@@ -1,13 +1,13 @@
 package pl.com.bottega.hrs.infrastructure;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import pl.com.bottega.hrs.application.*;
 import pl.com.bottega.hrs.model.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Component
@@ -24,8 +24,6 @@ public class JPACriteriaEmployeeFinder implements EmployeeFinder {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<BasicEmployeeDto> cq = cb.createQuery(BasicEmployeeDto.class);
         Root employee = cq.from(Employee.class);
-//        cq.select(cb.construct(BasicEmployeeDto.class,
-//                employee.get("empNo"), employee.get("firstName"), employee.get("lastName")));
         cq.select(cb.construct(BasicEmployeeDto.class,
                 employee.get(Employee_.empNo),
                 employee.get(Employee_.firstName),
@@ -34,7 +32,6 @@ public class JPACriteriaEmployeeFinder implements EmployeeFinder {
         Predicate predicate = buildPredicate(criteria, cb, employee);
 
         cq.where(predicate);
-
         cq.distinct(true);
         Query query = entityManager.createQuery(cq);
         query.setMaxResults(criteria.getPageSize());
@@ -54,11 +51,10 @@ public class JPACriteriaEmployeeFinder implements EmployeeFinder {
     @Transactional
     public DetailedEmployeeDto getEmployeeDetails(Integer empNo) {
         Employee employee = entityManager.find(Employee.class, empNo);
-        if (employee == null)
+        if(employee == null)
             throw new NoSuchEntityException();
         return new DetailedEmployeeDto(employee);
     }
-
 
     private int searchTotalCount(EmployeeSearchCriteria criteria) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -66,7 +62,6 @@ public class JPACriteriaEmployeeFinder implements EmployeeFinder {
         Root employee = cq.from(Employee.class);
         cq.select(cb.count(employee));
         Predicate predicate = buildPredicate(criteria, cb, employee);
-
         cq.where(predicate);
         Query query = entityManager.createQuery(cq);
         return ((Long) query.getSingleResult()).intValue();
@@ -78,16 +73,16 @@ public class JPACriteriaEmployeeFinder implements EmployeeFinder {
         predicate = addLastNamePredicate(criteria, cb, employee, predicate);
         predicate = addBirthDateFromPredicate(criteria, cb, employee, predicate);
         predicate = addBirthDateToPredicate(criteria, cb, employee, predicate);
-        predicate = addDepartmentsPredicate(criteria, cb, employee,predicate);
+        predicate = addDepartmentsPredicate(criteria, cb, employee, predicate);
         return predicate;
     }
 
     private Predicate addDepartmentsPredicate(EmployeeSearchCriteria criteria, CriteriaBuilder cb, Root employee, Predicate predicate) {
-        if (criteria.getDepartmentNumbers() != null && criteria.getDepartmentNumbers().size() > 0){
+        if(criteria.getDepartmentNumbers() != null && criteria.getDepartmentNumbers().size() > 0) {
             Join deptAsgn = employee.join(Employee_.departmentAssignments);
             Join dept = deptAsgn.join(DepartmentAssignment_.id).join("department");
             predicate = cb.and(predicate, dept.get(Department_.deptNo).in(criteria.getDepartmentNumbers()));
-            predicate = cb.and(predicate, cb.equal(deptAsgn.get(DepartmentAssignment_.toDate), TimeProvider.MAX_DATE));
+            predicate = cb.and(predicate, cb.equal(deptAsgn.get("toDate"), TimeProvider.MAX_DATE));
         }
         return predicate;
     }
