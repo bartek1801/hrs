@@ -95,8 +95,6 @@ public class AddEmployeeCommand implements Command {
         validatePresence(errors, "salary", salary);
         validatePresence(errors, "title", title);
         validatePresence(errors, "deptNo", deptNo);
-
-
         if (birthDate != null && birthDate.isAfter(LocalDate.now())) {
             errors.add("birthDate", "mast be in the past");
         }
