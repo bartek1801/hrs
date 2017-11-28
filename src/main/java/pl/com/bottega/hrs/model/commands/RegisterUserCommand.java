@@ -46,15 +46,14 @@ public class RegisterUserCommand implements Command {
     }
 
     private boolean validateMarks(String login){
-        //login powinien składać się tylko z liter i cyfr
         String acceptableMarks = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Integer checkSum = 0;
         for (int i = 0; i < login.length(); i++){
             for (int k = 0; k < acceptableMarks.length();k++){
-                if (login.charAt(i) != acceptableMarks.charAt(k))
-                    return false;
+                if (login.charAt(i) == acceptableMarks.charAt(k) )
+                    checkSum += 1;
             }
-            //TODO przetestować
         }
-        return true;
+        return checkSum == login.length();
     }
 }

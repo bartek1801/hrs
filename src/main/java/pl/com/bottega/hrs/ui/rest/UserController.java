@@ -1,9 +1,12 @@
 package pl.com.bottega.hrs.ui.rest;
 
 
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.com.bottega.hrs.application.CommandGateway;
+import pl.com.bottega.hrs.application.UserDto;
 import pl.com.bottega.hrs.application.UserFinder;
+import pl.com.bottega.hrs.model.commands.ChangePasswordCommand;
+import pl.com.bottega.hrs.model.commands.RegisterUserCommand;
 
 @RestController
 public class UserController {
@@ -17,18 +20,17 @@ public class UserController {
         this.commandGateway = commandGateway;
     }
 
-    //TODO request tworzenie nowych użytkowników (nowy controller) request POST do tabeli users
-    //przyjmuje JSONa "login" : "janek" i "password" : "dupa"
-    //stworzyć RegisterUserCommand i RegisterUserHandler
-    //Podczas tworzenia user theba sprawdzić w Handlerze czy użytkownik o takim loginie istnieje juz w repozytorium
-    //UserRepository i JpaUserRepository
-    //UserController do requestów tworzenia nowych userów
-
-    public void register(){
-
+    @PostMapping("/users")
+    public void register(@RequestBody RegisterUserCommand command){
+        commandGateway.execute(command);
     }
 
 
+    @PatchMapping("users/{login}")
+    public void changePassword(@PathVariable String login, @RequestBody ChangePasswordCommand command){
+        command.setLogin(login);
+        commandGateway.execute(command);
+    }
 
     //TODO zmiana hasła request PATCH /users/{login} w JSOnie przychodzi nowe hasło "password"
 

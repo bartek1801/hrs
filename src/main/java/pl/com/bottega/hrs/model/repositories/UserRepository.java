@@ -9,4 +9,6 @@ public interface UserRepository {
     void save(User user);
 
     User getUser(Integer userNo);
+
+    boolean checkLoginAvailability(String login);
 }

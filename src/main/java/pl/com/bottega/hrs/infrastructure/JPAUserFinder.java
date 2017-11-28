@@ -7,6 +7,7 @@ import pl.com.bottega.hrs.application.UserFinder;
 import pl.com.bottega.hrs.application.users.User;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 @Component
 public class JPAUserFinder implements UserFinder {
@@ -25,4 +26,17 @@ public class JPAUserFinder implements UserFinder {
             throw new NoSuchEntityException();
         return new UserDto(user);
     }
+
+    @Override
+    @Transactional
+    public UserDto getUserDetails(String login) {
+        Query query = entityManager.createQuery("SELECT u FROM User u WHERE u.login = :login");
+        query.setParameter("login", login);
+        User user = (User) query.getSingleResult();
+        if (user == null)
+            throw new NoSuchEntityException();
+        return new UserDto(user);
+    }
+
+
 }

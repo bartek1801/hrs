@@ -5,6 +5,8 @@ import pl.com.bottega.hrs.application.users.User;
 import pl.com.bottega.hrs.model.repositories.UserRepository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.List;
 
 @Component
 public class JPAUserRepository implements UserRepository {
@@ -34,5 +36,15 @@ public class JPAUserRepository implements UserRepository {
         if (user == null)
             throw new NoSuchEntityException();
         return user;
+    }
+
+    @Override
+    public boolean checkLoginAvailability(String login) {
+        Query query = entityManager.createQuery("SELECT u FROM User u WHERE u.login = :login");
+        query.setParameter("login", login);
+        List<User> result = query.getResultList();
+        if (result.isEmpty())
+            return true;
+        return false;
     }
 }
