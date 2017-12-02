@@ -64,4 +64,12 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+    public void updateProfile(String login, String password, Set<Role> roles) { //, Set<Role> roles
+        //TODO tutaj w parametrach mogą być nulle więc pewnie trzeba stworzyć  wersje tej metody z różnymi par wejściowymi
+        this.login = login;
+        this.password = password;
+        //this.roles = roles;
+        roles.addAll(roles);
+    }
 }

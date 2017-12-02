@@ -27,7 +27,7 @@ public class EmployeesController {
         return employeeFinder.search(criteria);
     }
 
-    @PutMapping("/employees/{empNo}/salary")
+    @PatchMapping("/employees/{empNo}/salary")
     public DetailedEmployeeDto changeSalary(@PathVariable Integer empNo, @RequestBody ChangeSalaryCommand cmd) {
 
         cmd.setEmpNo(empNo);

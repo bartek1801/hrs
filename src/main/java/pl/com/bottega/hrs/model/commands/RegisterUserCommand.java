@@ -2,7 +2,7 @@ package pl.com.bottega.hrs.model.commands;
 
 public class RegisterUserCommand implements Command {
 
-    String login, password, repeatedPassword;
+    private String login, password, repeatedPassword;
 
     public String getRepeatedPassword() {
         return repeatedPassword;
@@ -34,26 +34,21 @@ public class RegisterUserCommand implements Command {
         validatePresence(errors, "password", password);
         validatePresence(errors, "repeatedPassword", repeatedPassword);
         validateLogin(errors, login);
-        if (password.length() < 6)
-            errors.add("password", "password should contain at least 6 characters");
+        validatePasswordLength(errors, password);
+        validateRepeatedPassword(errors, password, repeatedPassword);
+//        validatePasswordLength(errors);
+//        validateRepeatedPassword(errors);
+    }
+
+    private void validateRepeatedPassword(ValidationErrors errors) {
         if (!password.equals(repeatedPassword))
             errors.add("password", "password and repeated password should be the same");
     }
 
-    private void validateLogin(ValidationErrors errors, String login) {
-        if(!validateMarks(login))
-            errors.add("login", "login should contains only letters and numbers");
+    private void validatePasswordLength(ValidationErrors errors) {
+        if (password.length() < 6)
+            errors.add("password", "password should contain at least 6 characters");
     }
 
-    private boolean validateMarks(String login){
-        String acceptableMarks = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Integer checkSum = 0;
-        for (int i = 0; i < login.length(); i++){
-            for (int k = 0; k < acceptableMarks.length();k++){
-                if (login.charAt(i) == acceptableMarks.charAt(k) )
-                    checkSum += 1;
-            }
-        }
-        return checkSum == login.length();
-    }
+
 }

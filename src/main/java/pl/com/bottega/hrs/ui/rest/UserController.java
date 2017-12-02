@@ -5,7 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import pl.com.bottega.hrs.application.CommandGateway;
 import pl.com.bottega.hrs.application.UserDto;
 import pl.com.bottega.hrs.application.UserFinder;
-import pl.com.bottega.hrs.model.commands.ChangePasswordCommand;
+import pl.com.bottega.hrs.application.users.User;
+import pl.com.bottega.hrs.model.commands.UpdateUserCommand;
 import pl.com.bottega.hrs.model.commands.RegisterUserCommand;
 
 @RestController
@@ -21,20 +22,22 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public void register(@RequestBody RegisterUserCommand command){
+    public void register(@RequestBody RegisterUserCommand command) {
         commandGateway.execute(command);
     }
 
-
-    @PatchMapping("users/{login}")
-    public void changePassword(@PathVariable String login, @RequestBody ChangePasswordCommand command){
-        command.setLogin(login);
-        commandGateway.execute(command);
+    @GetMapping("/users/{userNo}")
+    public UserDto get(@PathVariable Integer userNo){
+        return userFinder.getUserDetails(userNo);
     }
 
-    //TODO zmiana hasła request PATCH /users/{login} w JSOnie przychodzi nowe hasło "password"
 
-
+    @PatchMapping("users/{userNo}")
+    public UserDto updateUser(@PathVariable Integer userNo, @RequestBody UpdateUserCommand command) {
+        command.setUserNo(userNo);
+        commandGateway.execute(command);
+        return userFinder.getUserDetails(userNo);
+    }
 
 
 }
