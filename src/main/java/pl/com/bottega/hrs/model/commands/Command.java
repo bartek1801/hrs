@@ -39,12 +39,12 @@ public interface Command {
 
 
     default void validateRepeatedPassword(ValidationErrors errors, String password, String repeatedPassword) {
-        if (!password.equals(repeatedPassword))
+        if (repeatedPassword != null && !password.equals(repeatedPassword))
             errors.add("password", "password and repeated password should be the same");
     }
 
     default void validatePasswordLength(ValidationErrors errors, String password) {
-        if (password.length() < 6)
+        if (password != null && password.length() < 6)
             errors.add("password", "password should contain at least 6 characters");
     }
 

@@ -53,21 +53,11 @@ public class UpdateUserCommand implements Command {
         this.repeatedPassword = repeatedPassword;
     }
 
-//    Zasady działania:
-//    Nowy login trzeba sprawdzić pod kątem zajętości przez innego usera
-//    Zasady co do walidacji hasła j.w.
-//    Każdy z parametrów jest opcjonalny tzn. można zmienić tylko login i pominąć resztę parametrów.
-//    Wówczas pozostałe pola mogą nie znaleźć się w requeście.
-//    W przypadku zmiany hasła zawsze należy podać dwa pola new i repeatedPassword
-//    W przypadku zmiany ról, nie można podać pustej tablicy.
-//    Dodaj walidację komendy zgodnie z w.w. zasadami.
-
     public void validate(ValidationErrors errors){
         validatePasswordLength(errors, password);
         validateRepeatedPassword(errors, password, repeatedPassword);
-        if (roles.isEmpty())
+        if (roles != null && roles.isEmpty())
             errors.add("roles", "Role can't be blank");
-
     }
 
 

@@ -21,7 +21,7 @@ public class UpdateUserHandler implements Handler<UpdateUserCommand> {
     @Override
     @Transactional
     public void handle(UpdateUserCommand command) {
-        if (!userRepository.checkLoginAvailability(command.getLogin())) {
+        if (command.getLogin() != null &&  !userRepository.checkLoginAvailability(command.getLogin())) {
             ValidationErrors validationErrors = new ValidationErrors();
             validationErrors.add("login", "The login is busy, please try with another login");
             throw new CommandInvalidException(validationErrors);
