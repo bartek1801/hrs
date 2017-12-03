@@ -18,6 +18,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -42,6 +43,7 @@ public class RegisterUserTest extends AcceptanceTest {
         UserDto userDto = userFinder.getUserDetails("login123");
         assertEquals("login123", userDto.getLogin());
         assertEquals("testPassword", userDto.getPassword());
+        //assertTrue(userDto.getRoles().contains(Role.STANDARD));
 
     }
 

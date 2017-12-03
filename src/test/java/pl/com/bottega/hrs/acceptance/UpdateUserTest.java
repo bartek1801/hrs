@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class UpdateUserTest {
+public class UpdateUserTest extends AcceptanceTest {
 
     @Autowired
     private UserFinder userFinder;
@@ -37,14 +37,15 @@ public class UpdateUserTest {
 
     }
 
-    //@Test //TODO nie działa razem z innymi testami!!!
+    //@Test
     public void shouldUpdateUser(){
+        //TODO nie działa razem z innymi testami!!!
         //given
-        RegisterUserCommand registerCommand = new RegisterUserCommand();
-        registerCommand.setLogin("TestUser");
-        registerCommand.setPassword("password");
-        registerCommand.setRepeatedPassword("password");
-        registerUserHandler.handle(registerCommand);
+        RegisterUserCommand command = new RegisterUserCommand();
+        command.setLogin("login123");
+        command.setPassword("testPassword");
+        command.setRepeatedPassword("testPassword");
+        registerUserHandler.handle(command);
 
         //when
         UpdateUserCommand updateCommand = new UpdateUserCommand();

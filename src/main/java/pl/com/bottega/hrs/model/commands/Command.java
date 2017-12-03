@@ -2,6 +2,8 @@ package pl.com.bottega.hrs.model.commands;
 
 public interface Command {
 
+    int MIN_LENGTH = 6;
+
     default void validate(ValidationErrors validationErrors) {
 
     }
@@ -44,7 +46,7 @@ public interface Command {
     }
 
     default void validatePasswordLength(ValidationErrors errors, String password) {
-        if (password != null && password.length() < 6)
+        if (password != null && password.length() < MIN_LENGTH)
             errors.add("password", "password should contain at least 6 characters");
     }
 
