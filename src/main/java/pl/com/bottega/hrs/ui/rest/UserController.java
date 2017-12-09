@@ -3,9 +3,8 @@ package pl.com.bottega.hrs.ui.rest;
 
 import org.springframework.web.bind.annotation.*;
 import pl.com.bottega.hrs.application.CommandGateway;
-import pl.com.bottega.hrs.application.UserDto;
-import pl.com.bottega.hrs.application.UserFinder;
-import pl.com.bottega.hrs.application.users.User;
+import pl.com.bottega.hrs.application.users.UserDto;
+import pl.com.bottega.hrs.application.users.UserFinder;
 import pl.com.bottega.hrs.model.commands.UpdateUserCommand;
 import pl.com.bottega.hrs.model.commands.RegisterUserCommand;
 

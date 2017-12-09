@@ -33,7 +33,7 @@ public class RegisterUserCommand implements Command {
         validatePresence(errors, "login", login );
         validatePresence(errors, "password", password);
         validatePresence(errors, "repeatedPassword", repeatedPassword);
-        validateLogin(errors, login);
+        validateLogin(errors, login); //TODO walidacja za pomocą wyrażeń regularnych metoda vallidateFormat w Command
         validatePasswordLength(errors, password);
         validateRepeatedPassword(errors, password, repeatedPassword);
 //        validatePasswordLength(errors);

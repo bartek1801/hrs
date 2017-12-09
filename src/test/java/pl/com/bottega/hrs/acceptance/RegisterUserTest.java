@@ -5,16 +5,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.com.bottega.hrs.application.RegisterUserHandler;
-import pl.com.bottega.hrs.application.UserDto;
-import pl.com.bottega.hrs.application.UserFinder;
-import pl.com.bottega.hrs.application.users.Role;
+import pl.com.bottega.hrs.application.users.RegisterUserHandler;
+import pl.com.bottega.hrs.application.users.UserDto;
+import pl.com.bottega.hrs.application.users.UserFinder;
 import pl.com.bottega.hrs.model.commands.CommandInvalidException;
 import pl.com.bottega.hrs.model.commands.RegisterUserCommand;
-import pl.com.bottega.hrs.model.repositories.UserRepository;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

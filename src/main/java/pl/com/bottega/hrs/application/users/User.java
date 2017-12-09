@@ -70,8 +70,9 @@ public class User {
             this.login = login;
         if (password != null)
             this.password = password;
-        if (roles != null)
-            this.roles = roles;
-            //roles.addAll(roles);
+        if (roles != null) {
+            roles.clear();
+            roles.addAll(roles);
+        }
     }
 }

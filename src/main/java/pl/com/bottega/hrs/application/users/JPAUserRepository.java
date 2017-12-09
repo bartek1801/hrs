@@ -1,8 +1,7 @@
-package pl.com.bottega.hrs.infrastructure;
+package pl.com.bottega.hrs.application.users;
 
 import org.springframework.stereotype.Component;
-import pl.com.bottega.hrs.application.users.User;
-import pl.com.bottega.hrs.model.repositories.UserRepository;
+import pl.com.bottega.hrs.infrastructure.NoSuchEntityException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;

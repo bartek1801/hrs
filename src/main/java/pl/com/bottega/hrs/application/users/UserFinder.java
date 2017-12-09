@@ -1,4 +1,4 @@
-package pl.com.bottega.hrs.application;
+package pl.com.bottega.hrs.application.users;
 
 public interface UserFinder {
 

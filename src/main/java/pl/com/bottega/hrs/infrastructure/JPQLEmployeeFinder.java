@@ -4,6 +4,7 @@ import pl.com.bottega.hrs.application.DetailedEmployeeDto;
 import pl.com.bottega.hrs.application.EmployeeFinder;
 import pl.com.bottega.hrs.application.EmployeeSearchCriteria;
 import pl.com.bottega.hrs.application.EmployeeSearchResults;
+import pl.com.bottega.hrs.model.Employee;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -45,7 +46,11 @@ public class JPQLEmployeeFinder implements EmployeeFinder {
 
     @Override
     public DetailedEmployeeDto getEmployeeDetails(Integer empNo) {
-        return null;
+        Query query = entityManager.createQuery("Select e FROM Employee e WHERE e.id = :id" );
+        query.setParameter("id", empNo);
+        Employee employee = (Employee) query.getSingleResult();
+        return new DetailedEmployeeDto(employee);
     }
+
 
 }

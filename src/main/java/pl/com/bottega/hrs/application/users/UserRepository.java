@@ -1,4 +1,4 @@
-package pl.com.bottega.hrs.model.repositories;
+package pl.com.bottega.hrs.application.users;
 
 import pl.com.bottega.hrs.application.users.User;
 

@@ -13,6 +13,7 @@ import pl.com.bottega.hrs.model.commands.AddEmployeeCommand;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,6 +29,7 @@ public class CreateEmployeeTest extends AcceptanceTest {
 
     @Autowired
     private AddDepartmentHandler addDepartmentHandler;
+
 
     @Test
     public void shouldCreateEmployee() {
