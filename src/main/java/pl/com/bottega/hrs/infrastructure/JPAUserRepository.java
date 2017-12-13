@@ -1,9 +1,12 @@
-package pl.com.bottega.hrs.application.users;
+package pl.com.bottega.hrs.infrastructure;
 
 import org.springframework.stereotype.Component;
+import pl.com.bottega.hrs.application.users.User;
+import pl.com.bottega.hrs.application.users.UserRepository;
 import pl.com.bottega.hrs.infrastructure.NoSuchEntityException;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -45,5 +48,17 @@ public class JPAUserRepository implements UserRepository {
         if (result.isEmpty())
             return true;
         return false;
+    }
+
+    @Override
+    public User get(String login, String password) {
+        try {
+            User user = (User) entityManager.createQuery("SELECT u FROM User u WHERE u.login = :login AND u.password = :password")
+                    .setParameter("login", login)
+                    .setParameter("password", password).getSingleResult();
+            return user;
+        } catch (NoResultException ex) {
+            throw new NoSuchEntityException();
+        }
     }
 }

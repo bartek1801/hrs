@@ -11,4 +11,6 @@ public interface UserRepository {
     User getUser(Integer userNo);
 
     boolean checkLoginAvailability(String login);
+
+    User get(String login, String password);
 }

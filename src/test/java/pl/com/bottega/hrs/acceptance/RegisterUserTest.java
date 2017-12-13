@@ -37,7 +37,6 @@ public class RegisterUserTest extends AcceptanceTest {
         //then
         UserDto userDto = userFinder.getUserDetails("login123");
         assertEquals("login123", userDto.getLogin());
-        assertEquals("testPassword", userDto.getPassword());
         //assertTrue(userDto.getRoles().contains(Role.STANDARD));
 
     }

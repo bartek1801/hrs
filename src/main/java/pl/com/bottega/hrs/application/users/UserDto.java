@@ -1,22 +1,18 @@
 package pl.com.bottega.hrs.application.users;
 
-import pl.com.bottega.hrs.application.users.Role;
-import pl.com.bottega.hrs.application.users.User;
-
 import java.util.Set;
 
 public class UserDto {
 
     Integer userNo;
 
-    String login, password;
+    String login;
 
     Set<Role> roles;
 
     public UserDto(User user) {
         this.userNo = user.getId();
         this.login = user.getLogin();
-        this.password = user.getPassword();
         this.roles = user.getRoles();
     }
 
@@ -34,14 +30,6 @@ public class UserDto {
 
     public void setLogin(String login) {
         this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public Set<Role> getRoles() {

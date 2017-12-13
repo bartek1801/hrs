@@ -62,7 +62,6 @@ public class UpdateUserTest extends AcceptanceTest {
         //then
         UserDto userDto = userFinder.getUserDetails(1);
         assertEquals("newLogin", userDto.getLogin());
-        assertEquals("newPassword", userDto.getPassword());
         //assertTrue(userFinder.getUserDetails(1).getRoles().contains(Role.STANDARD));
         //assertTrue(userFinder.getUserDetails(1).getRoles().contains(Role.ADMIN));
     }
