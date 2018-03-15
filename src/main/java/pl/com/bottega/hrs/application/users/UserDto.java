@@ -1,27 +1,28 @@
 package pl.com.bottega.hrs.application.users;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class UserDto {
 
-    Integer userNo;
+    private Integer id;
 
-    String login;
+    private String login;
 
-    Set<Role> roles;
+    private Set<Role> roles;
 
     public UserDto(User user) {
-        this.userNo = user.getId();
+        this.id = user.getId();
         this.login = user.getLogin();
         this.roles = user.getRoles();
     }
 
-    public Integer getUserNo() {
-        return userNo;
+    public Integer getId() {
+        return id;
     }
 
-    public void setUserNo(Integer userNo) {
-        this.userNo = userNo;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getLogin() {
@@ -39,4 +40,6 @@ public class UserDto {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+
 }

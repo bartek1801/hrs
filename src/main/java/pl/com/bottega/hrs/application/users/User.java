@@ -1,11 +1,13 @@
 package pl.com.bottega.hrs.application.users;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -19,13 +21,14 @@ public class User {
     @ElementCollection
     @CollectionTable(
             name = "user_roles",
-            joinColumns = @JoinColumn(name="user_id")
+            joinColumns = @JoinColumn(name = "user_id")
     )
-    @Column(name="role")
+    @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
-    User() {}
+    User() {
+    }
 
     public User(String login, String password) {
         this.login = login;
@@ -33,46 +36,30 @@ public class User {
         roles.add(Role.STANDARD);
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getLogin() {
         return login;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void updateProfile(UpdateUserProfileCommand command) {
+        if (command.getLogin() != null)
+            login = command.getLogin();
+        if (command.getNewPassword() != null)
+            password = command.getNewPassword();
+        if (command.getRoles() != null) {
+            roles.clear();
+            roles.addAll(command.getRoles());
+        }
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public Integer getId() {
+        return id;
     }
 
     public Set<Role> getRoles() {
-        return roles;
+        return new HashSet<>(roles);
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public void updateProfile(String login, String password, Set<Role> roles) {
-        if (login != null)
-            this.login = login;
-        if (password != null)
-            this.password = password;
-        if (roles != null) {
-            roles.clear();
-            roles.addAll(roles);
-        }
+    public boolean hasRoles(Role[] requiredRoles) {
+        return roles.containsAll(Arrays.stream(requiredRoles).collect(Collectors.toList()));
     }
 }

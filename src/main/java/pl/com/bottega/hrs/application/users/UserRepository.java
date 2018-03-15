@@ -1,16 +1,16 @@
 package pl.com.bottega.hrs.application.users;
 
-import pl.com.bottega.hrs.application.users.User;
+import java.util.Optional;
 
 public interface UserRepository {
 
-    Integer generateNumber();
-
     void save(User user);
 
-    User getUser(Integer userNo);
+    boolean isLoginOccupied(String login);
 
-    boolean checkLoginAvailability(String login);
+    Optional<User> get(String login);
+
+    User get(Integer userId);
 
     User get(String login, String password);
 }

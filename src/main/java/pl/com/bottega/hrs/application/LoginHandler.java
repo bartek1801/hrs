@@ -19,7 +19,6 @@ public class LoginHandler implements Handler<LoginCommand> {
         this.currentUser = currentUser;
     }
 
-
     @Override
     public void handle(LoginCommand command) {
         User user = userRepository.get(command.getLogin(), command.getPassword());

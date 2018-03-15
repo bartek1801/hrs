@@ -55,6 +55,9 @@ public class Employee {
     @JoinColumn(name = "emp_no")
     private Collection<DepartmentAssignment> departmentAssignments = new LinkedList<>();
 
+    @Version
+    private int version;
+
     Employee() {
     }
 

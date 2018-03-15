@@ -5,6 +5,7 @@ import pl.com.bottega.hrs.model.Employee;
 import pl.com.bottega.hrs.model.repositories.EmployeeRepository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 
 @Component
 public class JPAEmployeeRepository implements EmployeeRepository {
@@ -32,7 +33,7 @@ public class JPAEmployeeRepository implements EmployeeRepository {
 
     @Override
     public Employee get(Integer empNo) {
-        Employee employee = entityManager.find(Employee.class, empNo);
+        Employee employee = entityManager.find(Employee.class, empNo, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         if(employee == null)
             throw new NoSuchEntityException();
         return employee;

@@ -1,6 +1,7 @@
 package pl.com.bottega.hrs.application.users;
 
 import pl.com.bottega.hrs.model.commands.Command;
+import pl.com.bottega.hrs.model.commands.CommandInvalidException;
 import pl.com.bottega.hrs.model.commands.ValidationErrors;
 
 public class LoginCommand implements Command {

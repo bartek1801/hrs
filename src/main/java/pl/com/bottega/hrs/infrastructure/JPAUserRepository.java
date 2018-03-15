@@ -3,12 +3,10 @@ package pl.com.bottega.hrs.infrastructure;
 import org.springframework.stereotype.Component;
 import pl.com.bottega.hrs.application.users.User;
 import pl.com.bottega.hrs.application.users.UserRepository;
-import pl.com.bottega.hrs.infrastructure.NoSuchEntityException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.util.List;
+import java.util.Optional;
 
 @Component
 public class JPAUserRepository implements UserRepository {
@@ -20,44 +18,44 @@ public class JPAUserRepository implements UserRepository {
     }
 
     @Override
-    public Integer generateNumber() {
-        Integer number = (Integer) entityManager.createQuery("SELECT MAX(u.id) + 1 FROM User u").getSingleResult();
-        if (number == null)
-            return 1;
-        return number;
-    }
-
-    @Override
     public void save(User user) {
         entityManager.persist(user);
     }
 
     @Override
-    public User getUser(Integer userNo) {
-        User user = entityManager.find(User.class, userNo);
-        if (user == null)
+    public boolean isLoginOccupied(String login) {
+        return get(login).isPresent();
+    }
+
+    @Override
+    public Optional<User> get(String login) {
+        try {
+            User user = (User) entityManager.createQuery("FROM User u WHERE u.login = :login").
+                    setParameter("login", login).getSingleResult();
+            return Optional.of(user);
+        }
+        catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public User get(Integer userId) {
+        User user = entityManager.find(User.class, userId);
+        if(user == null)
             throw new NoSuchEntityException();
         return user;
     }
 
     @Override
-    public boolean checkLoginAvailability(String login) {
-        Query query = entityManager.createQuery("SELECT u FROM User u WHERE u.login = :login");
-        query.setParameter("login", login);
-        List<User> result = query.getResultList();
-        if (result.isEmpty())
-            return true;
-        return false;
-    }
-
-    @Override
     public User get(String login, String password) {
         try {
-            User user = (User) entityManager.createQuery("SELECT u FROM User u WHERE u.login = :login AND u.password = :password")
-                    .setParameter("login", login)
-                    .setParameter("password", password).getSingleResult();
+            User user = (User) entityManager.createQuery("FROM User u WHERE u.login = :login AND u.password = :password").
+                    setParameter("login", login).
+                    setParameter("password", password).
+                    getSingleResult();
             return user;
-        } catch (NoResultException ex) {
+        }catch (NoResultException ex){
             throw new NoSuchEntityException();
         }
     }

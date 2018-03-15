@@ -19,15 +19,9 @@ public class CommandGateway {
     }
 
     public void execute(Command command) {
-        //validate(command);
+        validate(command);
         Handler handler = handlerFor(command);
-        handler = decorate(handler);
         handler.handle(command);
-    }
-
-    private Handler decorate(Handler handler) {
-        return new ValidatingHandler(handler);
-//        return new SecurutyHandler(new TransactionalHandler(new ValidatingHandler(handler)));
     }
 
     private void validate(Command command) {

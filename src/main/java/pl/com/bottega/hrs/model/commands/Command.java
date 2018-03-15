@@ -2,8 +2,6 @@ package pl.com.bottega.hrs.model.commands;
 
 public interface Command {
 
-    int MIN_LENGTH = 6;
-
     default void validate(ValidationErrors validationErrors) {
 
     }
@@ -20,34 +18,17 @@ public interface Command {
         }
     }
 
-    default void validateLogin(ValidationErrors errors, String login) {
-        if(!validateMarks(login))
-            errors.add("login", "login should contains only letters and numbers");
-    }
-
-    default boolean validateMarks(String login){
-        String acceptableMarks = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Integer checkSum = 0;
-        for (int i = 0; i < login.length(); i++){
-            for (int k = 0; k < acceptableMarks.length();k++){
-                if (login.charAt(i) == acceptableMarks.charAt(k) ) {
-                    checkSum += 1;
-                    continue;
-                }
-            }
+    default void validateMinLength(ValidationErrors errors, String field, String value, int minLength) {
+        if (value != null && value.length() < minLength) {
+            errors.add(field, "min length is " + minLength);
         }
-        return checkSum == login.length();
     }
 
-
-    default void validateRepeatedPassword(ValidationErrors errors, String password, String repeatedPassword) {
-        if (repeatedPassword != null && !password.equals(repeatedPassword))
-            errors.add("password", "password and repeated password should be the same");
+    default void validateFormat(ValidationErrors errors, String field, String value, String format) {
+        if(value != null && !value.matches(format)) {
+            errors.add(field, "invalid format");
+        }
     }
 
-    default void validatePasswordLength(ValidationErrors errors, String password) {
-        if (password != null && password.length() < MIN_LENGTH)
-            errors.add("password", "password should contain at least 6 characters");
-    }
 
 }
