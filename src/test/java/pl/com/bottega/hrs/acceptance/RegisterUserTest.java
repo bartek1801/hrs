@@ -5,60 +5,36 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.com.bottega.hrs.application.users.RegisterUserHandler;
-import pl.com.bottega.hrs.application.users.UserDto;
-import pl.com.bottega.hrs.application.users.UserFinder;
+import pl.com.bottega.hrs.application.CommandGateway;
+import pl.com.bottega.hrs.application.users.RegisterUserCommand;
 import pl.com.bottega.hrs.model.commands.CommandInvalidException;
-import pl.com.bottega.hrs.model.commands.RegisterUserCommand;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-@SpringBootTest
 @RunWith(SpringRunner.class)
+@SpringBootTest
 public class RegisterUserTest extends AcceptanceTest {
 
     @Autowired
-    private UserFinder userFinder;
-
-    @Autowired
-    private RegisterUserHandler registerUserHandler;
+    private CommandGateway gateway;
 
     @Test
-    public void shouldRegisterNewUser(){
-        //when
-        RegisterUserCommand command = new RegisterUserCommand();
-        command.setLogin("login123");
-        command.setPassword("testPassword");
-        command.setRepeatedPassword("testPassword");
-        registerUserHandler.handle(command);
+    public void shouldRegisterUser() {
+        RegisterUserCommand cmd = new RegisterUserCommand();
+        cmd.setLogin("test");
+        cmd.setPassword("123456");
+        cmd.setRepeatedPassword("123456");
 
-        //then
-        UserDto userDto = userFinder.getUserDetails("login123");
-        assertEquals("login123", userDto.getLogin());
-        //assertTrue(userDto.getRoles().contains(Role.STANDARD));
-
+        gateway.execute(cmd);
     }
 
     @Test(expected = CommandInvalidException.class)
-    public void shouldNotRegisterUsersWithTheSameLogins(){
-        //given
-        RegisterUserCommand command1 = new RegisterUserCommand();
-        command1.setLogin("login");
-        command1.setPassword("testPassword");
-        command1.setRepeatedPassword("testPassword");
-        registerUserHandler.handle(command1);
+    public void shouldNotAllowDuplicateLogin() {
+        RegisterUserCommand cmd = new RegisterUserCommand();
+        cmd.setLogin("test");
+        cmd.setPassword("123456");
+        cmd.setRepeatedPassword("123456");
+        gateway.execute(cmd);
 
-        //when
-        RegisterUserCommand command2 = new RegisterUserCommand();
-        command2.setLogin("login");
-        command2.setPassword("testpass");
-        command2.setRepeatedPassword("testpass");
-        registerUserHandler.handle(command2);
-
+        gateway.execute(cmd);
     }
-
-
 
 }

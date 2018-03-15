@@ -57,7 +57,7 @@ public class JPAEmployeeRepositoryTest extends InfrastructureTest {
 
     @Test(expected = NoSuchEntityException.class)
     public void shouldThrowExceptionWhenNoSuchEmployee() {
-        sut.get(1);
+        executeInTransaction(entityManager, () -> sut.get(1));
     }
 
     private Employee createEmployee(Integer no, String lastName) {
